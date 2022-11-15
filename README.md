@@ -16,12 +16,12 @@ The rest are optional and, if unspecified, will use the listed default.
 | `ADMIN_USERNAME`      | Administrator username.                                                                     |                     |
 | `ADMIN_PASSWORD`      | Administrator password.                                                                     |                     |
 | `SECRET_KEY`          | Patchman's secret key. Create a unique string and don't share it with anybody.              |                     |
-| `DB_ENGINE`           | Supported database engines: `mysql`, `oracle`, `postgresql`, and `sqlite3`.                 | `sqlite3`           |
-| `DB_HOST`             | Database server IP/name.<br>**Do not specify if using `sqlite3`.**                          |                     |
-| `DB_PORT`             | Database port.<br>**Do not specify if using `sqlite3`.**                                    |                     |
-| `DB_NAME`             | Database name or path to file if using `sqlite3`.                                           | `/app/db/sqlite.db` |
-| `DB_USER`             | Database username.<br>**Do not specify if using `sqlite3`.**                                |                     |
-| `DB_PASSWORD`         | Database password.<br>**Do not specify if using `sqlite3`.**                                |                     |
+| `DB_ENGINE`           | Supported database engines: `mysql`, `oracle`, and `postgresql`.                            |                     |
+| `DB_HOST`             | Database server IP/name.                                                                    |                     |
+| `DB_PORT`             | Database port.                                                                              |                     |
+| `DB_NAME`             | Database name or path to file if using `sqlite3`.                                           |                     |
+| `DB_USER`             | Database username.                                                                          |                     |
+| `DB_PASSWORD`         | Database password.                                                                          |                     |
 | `TIME_ZONE`           | Set time zone. See choices [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).   | `Europe/London`     |
 | `LANGUAGE_CODE`       | Set language. See choices [here](http://www.i18nguy.com/unicode/language-identifiers.html). | `en-GB`             |
 | `MAX_MIRRORS`         | Maximum number of mirrors to add or refresh per repo.                                       | `5`                 |

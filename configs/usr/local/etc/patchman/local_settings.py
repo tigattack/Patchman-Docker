@@ -69,6 +69,10 @@ RUN_GUNICORN = True
 # Copy patchman media from these directories
 STATICFILES_DIRS = ("/app/patchman/static/",)
 
+# Enable Celery
+USE_ASYNC_PROCESSING = True
+CELERY_BROKER_URL = "redis://redis:6379/0"
+
 # Configure file-based cache
 # Patchman appears to not utilise cache, despite instructing users to configure it.
 # https://github.com/furlongm/patchman/issues/433
