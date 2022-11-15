@@ -1,5 +1,7 @@
 #!/bin/sh -e
 
+echo "$1" > /tmp/container-mode
+
 if [ "$1" = "worker" ]; then
 
   # Ensure celery log level is uppercase
@@ -23,4 +25,5 @@ elif [ "$1" = "server" ]; then
 
 else
   echo "Unknown command: $1"
+  exit 1
 fi
