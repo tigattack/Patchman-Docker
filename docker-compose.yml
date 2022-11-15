@@ -5,6 +5,14 @@ services:
     command: server
     restart: unless-stopped
     ports: [8080:80]
+    healthcheck:
+      test:
+        - "CMD"
+        - "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://127.0.0.1:80/"
+      start_period: 60s
+      interval: 30s
+      retries: 5
+      timeout: 10s
     env_file:
       - .env
 
@@ -13,9 +21,25 @@ services:
     command: worker
     depends_on: [redis]
     restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD"
+        - "celery -b redis://$${CELERY_REDIS_HOST}:$${CELERY_REDIS_PORT}/0 inspect ping"
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
     env_file:
       - .env
 
   redis:
     image: redis:alpine
     restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "redis-cli ping | grep PONG"
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 3s
