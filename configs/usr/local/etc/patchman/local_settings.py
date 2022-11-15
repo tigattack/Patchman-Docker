@@ -3,23 +3,23 @@
 import environ
 
 env = environ.Env(
-    DJANGO_DEBUG=(bool, False),
-    DJANGO_LOGLEVEL=(str, "INFO"),
-    ALLOWED_HOSTS=(list, ['*']),
-    SECRET_KEY=(str),
-    ADMIN_EMAIL=(str),
-    ADMIN_USERNAME=(str),
-    ADMIN_PASSWORD=(str),
-    DB_ENGINE=(str, "sqlite3"),
-    DB_HOST=(str, ""),
-    DB_PORT=(str, ""),
-    DB_NAME=(str, "/app/db/sqlite.db"),
-    DB_USER=(str, ""),
-    DB_PASSWORD=(str, ""),
-    TIME_ZONE=(str, "Europe/London"),
-    LANGUAGE_CODE=(str, "en-GB"),
-    MAX_MIRRORS=(int, 5),
-    DAYS_WITHOUT_REPORT=(int, 14),
+    DJANGO_DEBUG        = (bool, False),
+    DJANGO_LOGLEVEL     = (str, "INFO"),
+    ALLOWED_HOSTS       = (list, ['*']),
+    SECRET_KEY          = (str),
+    ADMIN_EMAIL         = (str),
+    ADMIN_USERNAME      = (str),
+    ADMIN_PASSWORD      = (str),
+    DB_ENGINE           = (str, "sqlite3"),
+    DB_HOST             = (str, ""),
+    DB_PORT             = (int, ""),
+    DB_NAME             = (str, "/app/db/sqlite.db"),
+    DB_USER             = (str, ""),
+    DB_PASSWORD         = (str, ""),
+    TIME_ZONE           = (str),
+    LANGUAGE_CODE       = (str),
+    MAX_MIRRORS         = (int, 5),
+    DAYS_WITHOUT_REPORT = (int, 14),
 )
 
 DEBUG = env("DJANGO_DEBUG")
@@ -53,8 +53,7 @@ LANGUAGE_CODE = env("LANGUAGE_CODE")
 # Create a unique string here, and don't share it with anybody.
 SECRET_KEY = env("SECRET_KEY")
 
-# Add the IP addresses that your web server will be listening on,
-# instead of '*'
+# Add the IP addresses that your web server will be listening on
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
 
 # Maximum number of mirrors to add or refresh per repo
@@ -71,7 +70,7 @@ STATICFILES_DIRS = ("/app/patchman/static/",)
 
 # Enable Celery
 USE_ASYNC_PROCESSING = True
-CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_BROKER_URL    = "redis://redis:6379/0"
 
 # Configure file-based cache
 # Patchman appears to not utilise cache, despite instructing users to configure it.
