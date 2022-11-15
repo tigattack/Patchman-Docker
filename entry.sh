@@ -1,6 +1,7 @@
 #!/bin/sh -e
 
 # Set default values
+CELERY_USERNAME="celery"
 DEFAULT_CELERY_REDIS_HOST="redis"
 DEFAULT_CELERY_REDIS_PORT="6379"
 DEFAULT_CELERY_LOG_LEVEL="INFO"
@@ -23,8 +24,13 @@ if [ "$1" = "worker" ]; then
     export CELERY_LOG_LEVEL="$(echo $CELERY_LOG_LEVEL | tr '[a-z]' '[A-Z]')"
   fi
 
+  # Add celery user if it doesn't exist
+  id -u "$CELERY_USERNAME" >/dev/null 2>&1 || adduser -S "$CELERY_USERNAME"
+  # Get celery user id
+  celery_uid="$(id -u $CELERY_USERNAME)"
+
   # Run celery
-  C_FORCE_ROOT=1 celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l "$CELERY_LOG_LEVEL" -E
+  celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l "$CELERY_LOG_LEVEL" -E --uid $celery_uid
 
 elif [ "$1" = "server" ]; then
 
