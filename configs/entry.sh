@@ -18,7 +18,8 @@ if [ "$1" = "worker" ]; then
 elif [ "$1" = "server" ]; then
 
   # Prepare DB
-  ./manage.py migrate --run-syncdb
+  ${APPDIR}/manage.py migrate --run-syncdb
+  ${APPDIR}/manage.py collectstatic --noinput --clear
 
   # Run gunicorn for patchman
   gunicorn --bind 0.0.0.0:80 --workers "$GUNICORN_WORKERS" patchman.wsgi:application
