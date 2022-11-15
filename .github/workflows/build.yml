@@ -25,6 +25,9 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Define build date
+      run: echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
+
     - name: Build & Publish image
       id: docker_build
       uses: docker/build-push-action@v3
@@ -34,3 +37,5 @@ jobs:
         tags: ghcr.io/tigattack/patchman:latest
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          BUILD_DATE=${{ env.build_date }}
