@@ -20,6 +20,8 @@ env = environ.Env(
     LANGUAGE_CODE       = (str),
     MAX_MIRRORS         = (int, 5),
     DAYS_WITHOUT_REPORT = (int, 14),
+    CELERY_REDIS_HOST   = (str, "redis"),
+    CELERY_REDIS_PORT   = (str, "6379")
 )
 
 DEBUG = env("DJANGO_DEBUG")
@@ -71,7 +73,7 @@ STATICFILES_DIRS = ("/app/patchman/static/",)
 
 # Enable Celery
 USE_ASYNC_PROCESSING = True
-CELERY_BROKER_URL    = "redis://redis:6379/0"
+CELERY_BROKER_URL    = f"redis://{env(('CELERY_REDIS_HOST'))}:{env(('CELERY_REDIS_PORT'))}/0"
 
 # Configure file-based cache
 # Patchman appears to not utilise cache, despite instructing users to configure it.
