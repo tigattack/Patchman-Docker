@@ -42,6 +42,8 @@ RUN \
   # Py deps
   pip install --no-cache-dir --no-warn-script-location \
     $EXTRA_PY_DEPS -r "${APPDIR}/requirements.txt" &&\
+  # Install Patchman
+  ${APPDIR}/setup.py install &&\
   # Remove build deps
   apk del --purge .build-deps
 
