@@ -22,14 +22,16 @@ The rest are optional and, if unspecified, will use the listed default.
 | `DB_NAME`             | Database name or path to file if using `sqlite3`.                                           |                     |
 | `DB_USER`             | Database username.                                                                          |                     |
 | `DB_PASSWORD`         | Database password.                                                                          |                     |
-| `TIME_ZONE`           | Set time zone. See choices [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).   | `Europe/London`     |
-| `LANGUAGE_CODE`       | Set language. See choices [here](http://www.i18nguy.com/unicode/language-identifiers.html). | `en-GB`             |
+| `TIME_ZONE`           | Time zone for this installation. All choices can be found [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).   | `America/NewYork`   |
+| `LANGUAGE_CODE`       | Language for this installation. All choices can be found [here](http://www.i18nguy.com/unicode/language-identifiers.html). | `en-US`             |
 | `MAX_MIRRORS`         | Maximum number of mirrors to add or refresh per repo.                                       | `5`                 |
 | `DAYS_WITHOUT_REPORT` | Number of days to wait before notifying users that a host has not reported.                 | `14`                |
 | `ALLOWED_HOSTS`       | Hosts allowed to access Patchman.                                                           | `*`                 |
 | `DJANGO_DEBUG`        | Enable/disable Django debug.                                                                | `False`             |
 | `DJANGO_LOGLEVEL`     | Set Django's log level.                                                                     | `INFO`              |
 | `GUNICORN_WORKERS`    | Numbers of Gunicorn (web server) workers.                                                   | `2`                 |
+| `CELERY_REDIS_HOST`   | Redis server IP/name for Celery worker.                                                     | `redis`             |
+| `CELERY_REDIS_PORT`   | Redis server port for Celery worker.                                                        | `6379`              |
 
 ## MySQL DB config
 
