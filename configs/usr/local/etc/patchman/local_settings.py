@@ -9,7 +9,6 @@ env = environ.Env(
     SECRET_KEY          = (str),
     ADMIN_EMAIL         = (str),
     ADMIN_USERNAME      = (str),
-    ADMIN_PASSWORD      = (str),
     DB_ENGINE           = (str, "sqlite3"),
     DB_HOST             = (str, ""),
     DB_PORT             = (int, ""),

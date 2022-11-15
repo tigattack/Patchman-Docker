@@ -18,10 +18,6 @@ elif [ "$1" = "server" ]; then
   # Prepare DB
   ./manage.py migrate --run-syncdb
 
-  # Create Django superuser
-  # This exists because there's no '--noinput' flag in Django 2, which patchman is based on.
-  echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(email='$ADMIN_EMAIL', is_superuser=True).delete(); User.objects.create_superuser('$ADMIN_USERNAME', '$ADMIN_EMAIL', '$ADMIN_PASSWORD')" | ./manage.py shell
-
   # Run gunicorn for patchman
   gunicorn --bind 0.0.0.0:80 --workers "$GUNICORN_WORKERS" patchman.wsgi:application
 
