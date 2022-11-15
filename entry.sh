@@ -1,7 +1,14 @@
 #!/bin/sh -e
 
 if [ "$1" = "worker" ]; then
-  C_FORCE_ROOT=1 celery -b redis://redis:6379/0 -A patchman worker -l INFO -E
+  if [ -z "$CELERY_REDIS_HOST" ]; then
+    export CELERY_REDIS_HOST="redis"
+  fi
+  if [ -z "$CELERY_REDIS_PORT" ]; then
+    export CELERY_REDIS_PORT="6379"
+  fi
+
+  C_FORCE_ROOT=1 celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l INFO -E
 
 elif [ "$1" = "server" ]; then
 
