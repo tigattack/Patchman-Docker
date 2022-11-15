@@ -47,4 +47,4 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
-          BUILD_DATE=${{ env.build_date }}
+          BUILD_DATE=${{ env.BUILD_DATE }}
