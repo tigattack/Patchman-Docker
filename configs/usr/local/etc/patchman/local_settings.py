@@ -20,8 +20,8 @@ env = environ.Env(
     LANGUAGE_CODE       = (str),
     MAX_MIRRORS         = (int, 5),
     DAYS_WITHOUT_REPORT = (int, 14),
-    CELERY_REDIS_HOST   = (str, "redis"),
-    CELERY_REDIS_PORT   = (str, "6379")
+    CELERY_REDIS_HOST   = (str),
+    CELERY_REDIS_PORT   = (str),
 )
 
 DEBUG = env("DJANGO_DEBUG")

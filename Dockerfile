@@ -3,7 +3,6 @@ FROM python:3.9-alpine
 ARG BUILD_DATE
 # Branch name or tag like "tags/v2.0.3"
 ARG BRANCH="master"
-ENV APPDIR="/app"
 ARG EXTRA_PY_DEPS="celery==5.2.7 \
   django-environ==0.9.0 \
   gunicorn==20.1.0 \
@@ -11,6 +10,12 @@ ARG EXTRA_PY_DEPS="celery==5.2.7 \
   redis==4.3.4 \
   psycopg[binary]==3.1.4 \
   whitenoise==3.3.1"
+
+ENV APPDIR="/app"
+ENV CELERY_REDIS_HOST="redis"
+ENV CELERY_REDIS_PORT="6379"
+ENV CELERY_LOG_LEVEL="INFO"
+ENV GUNICORN_WORKERS="2"
 
 LABEL org.opencontainers.image.authors="tigattack"
 LABEL org.opencontainers.image.title="Patchman"
@@ -24,6 +29,7 @@ LABEL org.opencontainers.image.created=$BUILD_DATE
 RUN \
   # Required deps
   apk --no-cache add \
+    curl \
     git \
     libmagic \
     libxslt-dev \
