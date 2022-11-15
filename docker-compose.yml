@@ -43,3 +43,5 @@ services:
       interval: 30s
       retries: 5
       timeout: 3s
+    sysctls:
+      net.core.somaxconn: '511'
