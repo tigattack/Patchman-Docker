@@ -7,7 +7,7 @@ services:
     ports: [8080:80]
     healthcheck:
       test:
-        - "CMD"
+        - "CMD-SHELL"
         - "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null http://127.0.0.1:80/"
       start_period: 60s
       interval: 30s
@@ -23,8 +23,8 @@ services:
     restart: unless-stopped
     healthcheck:
       test:
-        - "CMD"
-        - "celery -b redis://$${CELERY_REDIS_HOST}:$${CELERY_REDIS_PORT}/0 inspect ping"
+        - "CMD-SHELL"
+        - "celery -b redis://$${CELERY_REDIS_HOST}:$${CELERY_REDIS_PORT}/0 inspect ping -j"
       start_period: 20s
       interval: 30s
       retries: 5
