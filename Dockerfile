@@ -34,11 +34,12 @@ RUN \
     libmagic \
     libxslt-dev \
     mariadb-connector-c-dev &&\
-  # Build deps
-  apk add --no-cache --virtual .build-deps build-base &&\
-  # Clone repo & checkout version
+  # Clone repo, checkout version, and enter directory
   git clone https://github.com/furlongm/patchman.git "$APPDIR" && \
   git --git-dir "${APPDIR}/.git" checkout $BRANCH -b execbranch &&\
+  cd "$APPDIR" &&\
+  # Build deps
+  apk add --no-cache --virtual .build-deps build-base &&\
   # Py deps
   pip install --no-cache-dir --no-warn-script-location \
     $EXTRA_PY_DEPS -r "${APPDIR}/requirements.txt" &&\

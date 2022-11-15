@@ -9,14 +9,14 @@ env = environ.Env(
     SECRET_KEY          = (str),
     ADMIN_EMAIL         = (str),
     ADMIN_USERNAME      = (str),
-    DB_ENGINE           = (str, "sqlite3"),
-    DB_HOST             = (str, ""),
+    DB_ENGINE           = (str),
+    DB_HOST             = (str),
     DB_PORT             = (int, ""),
-    DB_NAME             = (str, "/app/db/sqlite.db"),
-    DB_USER             = (str, ""),
-    DB_PASSWORD         = (str, ""),
-    TIME_ZONE           = (str),
-    LANGUAGE_CODE       = (str),
+    DB_NAME             = (str),
+    DB_USER             = (str),
+    DB_PASSWORD         = (str),
+    TIME_ZONE           = (str, "Etc/UTC"),
+    LANGUAGE_CODE       = (str, "en-GB"),
     MAX_MIRRORS         = (int, 5),
     DAYS_WITHOUT_REPORT = (int, 14),
     CELERY_REDIS_HOST   = (str),
@@ -27,17 +27,17 @@ DEBUG = env("DJANGO_DEBUG")
 LOGLEVEL = env("DJANGO_LOGLEVEL").upper()
 
 ADMINS = (
-    ('', f'{env("ADMIN_EMAIL")}'),
+    (f'{env("ADMIN_USERNAME")}', f'{env("ADMIN_EMAIL")}'),
 )
 
 DATABASES = {
     "default": {
         "ENGINE": f"django.db.backends.{env('DB_ENGINE')}",
-        "NAME": f"{env('DB_NAME')}",
-        "USER": f"{env('DB_USER')}",
-        "PASSWORD": f"{env('DB_PASSWORD')}",
-        "HOST": f"{env('DB_HOST')}",
-        "PORT": f"{env('DB_PORT')}",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
         "STORAGE_ENGINE": "INNODB",
         "CHARSET" : "utf8"
     }
@@ -46,7 +46,8 @@ DATABASES = {
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 TIME_ZONE = env("TIME_ZONE")
-USE_TZ    = len(env("TIME_ZONE")) > 0
+# True if value not default:
+USE_TZ    = env("TIME_ZONE") != "Etc/UTC"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html

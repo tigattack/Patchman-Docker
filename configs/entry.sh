@@ -19,7 +19,8 @@ elif [ "$1" = "server" ]; then
 
   # Prepare DB
   ${APPDIR}/manage.py migrate --run-syncdb
-  ${APPDIR}/manage.py collectstatic --noinput --clear
+  # Quietly collect static files
+  ${APPDIR}/manage.py collectstatic --noinput --clear >/dev/null
 
   # Run gunicorn for patchman
   gunicorn --bind 0.0.0.0:80 --workers "$GUNICORN_WORKERS" patchman.wsgi:application

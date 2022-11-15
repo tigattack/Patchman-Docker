@@ -5,12 +5,16 @@ services:
     command: server
     restart: unless-stopped
     ports: [8080:80]
+    env_file:
+      - .env
 
   worker:
     image: ghcr.io/tigattack/patchman
     command: worker
     depends_on: [redis]
     restart: unless-stopped
+    env_file:
+      - .env
 
   redis:
     image: redis:alpine
