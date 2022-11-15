@@ -15,8 +15,8 @@ LABEL org.opencontainers.image.authors="tigattack"
 LABEL org.opencontainers.image.title="Patchman"
 LABEL org.opencontainers.image.description="Alpine-based Patchman container image."
 LABEL org.opencontainers.image.url="https://github.com/furlongm/patchman"
-LABEL org.opencontainers.image.documentation="https://github.com/tigattack/Docker-Patchman/blob/main/README.md"
-LABEL org.opencontainers.image.source="https://github.com/tigattack/Docker-Patchman"
+LABEL org.opencontainers.image.documentation="https://github.com/tigattack/Patchman-Docker/blob/main/README.md"
+LABEL org.opencontainers.image.source="https://github.com/tigattack/Patchman-Docker"
 LABEL org.opencontainers.image.version=$BRANCH
 LABEL org.opencontainers.image.created=$BUILD_DATE
 
