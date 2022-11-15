@@ -11,6 +11,7 @@ services:
   worker:
     image: ghcr.io/tigattack/patchman
     command: worker
+    depends_on: [redis]
     restart: unless-stopped
     env_file:
       - .env
