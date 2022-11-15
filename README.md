@@ -4,46 +4,61 @@ This is a Dockerised version of [Patchman](https://github.com/furlongm/patchman)
 
 It also has a modified host page to add a separate section for security updates.
 
+## Getting Started
+
+1. Download `docker-compose.yml` and `.env`
+2. Add your configuration in `.env` (see Environment Variables below)
+3. Run `docker compose up -d` or `docker-compose up -d` (old version)
+4. Run `docker compose exec -it server patchman-manage createsuperuser` and enter the same ADMIN details you configured in `.env`
+5. Run `docker compose logs mariadb 2>&1 | grep GENERATED` to get your generated MariaDB root password. Store this somewhere safe.
+6. Browse to `<IP/hostname>:8080` and start using Patchman!
+
+For next steps, you'll need to configure your Patchman clients. You can find instructions in the [Patchman](https://github.com/furlongm/patchman) repository.
+
+### MySQL/MariaDB
+
+By default, the MariaDB database included in `docker-compose.yml` will use a randomly generated root password.
+
+If you wish to set your own password, configure a `MYSQL_ROOT_PASSWORD` environment variable in `docker-compose.yml`.
+
 ## Environment variables
 
 All environment variables without a default are **required**, unless noted otherwise in the variable's description.
 
 The rest are optional and, if unspecified, will use the listed default.
 
-| Name                  | Description                                                                                 | Default             |
-|-----------------------|---------------------------------------------------------------------------------------------|---------------------|
-| `ADMIN_EMAIL`         | Administrator email address.                                                                |                     |
-| `ADMIN_USERNAME`      | Administrator username.                                                                     |                     |
-| `ADMIN_PASSWORD`      | Administrator password.                                                                     |                     |
-| `SECRET_KEY`          | Patchman's secret key. Create a unique string and don't share it with anybody.              |                     |
-| `DB_ENGINE`           | Supported database engines: `mysql`, `oracle`, `postgresql`, and `sqlite3`.                 | `sqlite3`           |
-| `DB_HOST`             | Database server IP/name.<br>**Do not specify if using `sqlite3`.**                          |                     |
-| `DB_PORT`             | Database port.<br>**Do not specify if using `sqlite3`.**                                    |                     |
-| `DB_NAME`             | Database name or path to file if using `sqlite3`.                                           | `/app/db/sqlite.db` |
-| `DB_USER`             | Database username.<br>**Do not specify if using `sqlite3`.**                                |                     |
-| `DB_PASSWORD`         | Database password.<br>**Do not specify if using `sqlite3`.**                                |                     |
-| `TIME_ZONE`           | Set time zone. See choices [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).   | `Europe/London`     |
-| `LANGUAGE_CODE`       | Set language. See choices [here](http://www.i18nguy.com/unicode/language-identifiers.html). | `en-GB`             |
-| `MAX_MIRRORS`         | Maximum number of mirrors to add or refresh per repo.                                       | `5`                 |
-| `DAYS_WITHOUT_REPORT` | Number of days to wait before notifying users that a host has not reported.                 | `14`                |
-| `ALLOWED_HOSTS`       | Hosts allowed to access Patchman.                                                           | `*`                 |
-| `DJANGO_DEBUG`        | Enable/disable Django debug.                                                                | `False`             |
-| `DJANGO_LOGLEVEL`     | Set Django's log level.                                                                     | `INFO`              |
-| `GUNICORN_WORKERS`    | Numbers of Gunicorn (web server) workers.                                                   | `2`                 |
+| Name                  | Description                                                                                                                                                                                                                                   | Default           |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
+| `ADMIN_EMAIL`         | Administrator email address.                                                                                                                                                                                                                  |                   |
+| `ADMIN_USERNAME`      | Administrator username.                                                                                                                                                                                                                       |                   |
+| `SECRET_KEY`          | Patchman's secret key. Create a unique string and don't share it with anybody.                                                                                                                                                                |                   |
+| `TIME_ZONE`           | Time zone for this installation. All choices can be found [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).<br>At time of writing, Patchman does not properly support this. It will work, but you'll receive warnings to STDOUT. | `Etc/UTC`         |
+| `LANGUAGE_CODE`       | Language for this installation. All choices can be found [here](http://www.i18nguy.com/unicode/language-identifiers.html).                                                                                                                    | `en-GB`           |
+| `MAX_MIRRORS`         | Maximum number of mirrors to add or refresh per repo.                                                                                                                                                                                         | `5`               |
+| `DAYS_WITHOUT_REPORT` | Number of days to wait before notifying users that a host has not reported.                                                                                                                                                                   | `14`              |
+| `ALLOWED_HOSTS`       | Hosts allowed to access Patchman.                                                                                                                                                                                                             | `*`               |
+| `DJANGO_DEBUG`        | Enable/disable Django debug.                                                                                                                                                                                                                  | `False`           |
+| `DJANGO_LOGLEVEL`     | Set Django's log level.                                                                                                                                                                                                                       | `INFO`            |
+| `GUNICORN_WORKERS`    | Numbers of Gunicorn (web server) workers.                                                                                                                                                                                                     | `2`               |
+| `CELERY_REDIS_HOST`   | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server.                                                                                                                                            | `redis`           |
+| `CELERY_REDIS_PORT`   | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.                                                                                                                                               | `6379`            |
+| `CELERY_LOG_LEVEL`    | Set Celery's log level.                                                                                                                                                                                                                       | `INFO`            |
 
-## MySQL DB config
+### Database Configuration
 
-Note you can use any of the supported databases listed above, this is just an example for preparing MySQL for Patchman.
+By default, Patchman will use the database container included in `docker-compose.yml`.
 
-The following MySQL commands should be run (after replacing passwords etc.) on your database prior to starting up your container.
+However, you can use an external/different database if you wish. To do so, configure `.env` with the following settings:
 
-```
-mysql> CREATE DATABASE patchman CHARACTER SET utf8 COLLATE utf8_general_ci;
-Query OK, 1 row affected (0.00 sec)
+| Name          | Description                                                             | Default                 |
+|---------------|-------------------------------------------------------------------------|-------------------------|
+| `DB_ENGINE`   | Supported database engines: `mysql`, `oracle`, and `postgresql`.        | `mysql`                 |
+| `DB_HOST`     | Database server IP/name.                                                | `mariadb`               |
+| `DB_PORT`     | Database port. If empty, will use the default port for selected engine. |                         |
+| `DB_NAME`     | Database name.                                                          | `patchman`              |
+| `DB_USER`     | Database username.                                                      | `patchman`              |
+| `DB_PASSWORD` | Database password.                                                      | `MyPatchmanDBP@ssw0rd!` |
 
-mysql> GRANT ALL PRIVILEGES ON patchman.* TO patchman@'%' IDENTIFIED BY 'coolpw';
-Query OK, 0 rows affected (0.00 sec)
-```
 
 ## Credits
 

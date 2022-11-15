@@ -1,14 +1,60 @@
 version: '3'
 services:
-  patchman:
+  server:
     image: ghcr.io/tigattack/patchman
+    command: server
     restart: unless-stopped
     ports: [8080:80]
-    environment:
-      ADMIN_USERNAME: myname
-      ADMIN_EMAIL: contact@me.com
-      ADMIN_PASSWORD: SuperSecurePassword!
-      SECRET_KEY: SuperSecureKey!
-    # Only needed if using sqlite:
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  worker:
+    image: ghcr.io/tigattack/patchman
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "redis-cli ping | grep PONG"
+      interval: 10s
+      retries: 5
+      timeout: 3s
+    sysctls:
+      net.core.somaxconn: '511'
     volumes:
-      - ./database:/app/db/
+      - redis:/data
+
+  mariadb:
+    image: mariadb:10.9-jammy
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_DATABASE: ${DB_NAME:-patchman}
+      MYSQL_USER: ${DB_USER:-patchman}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "mysqladmin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
+      interval: 10s
+      retries: 20
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
