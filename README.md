@@ -32,6 +32,7 @@ The rest are optional and, if unspecified, will use the listed default.
 | `GUNICORN_WORKERS`    | Numbers of Gunicorn (web server) workers.                                                   | `2`                 |
 | `CELERY_REDIS_HOST`   | Redis server IP/name for Celery worker.                                                     | `redis`             |
 | `CELERY_REDIS_PORT`   | Redis server port for Celery worker.                                                        | `6379`              |
+| `CELERY_LOG_LEVEL`    | Set Celery's log level.                                                                     | `INFO`              |
 
 ## MySQL DB config
 

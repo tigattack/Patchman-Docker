@@ -3,6 +3,7 @@
 # Set default values
 DEFAULT_CELERY_REDIS_HOST="redis"
 DEFAULT_CELERY_REDIS_PORT="6379"
+DEFAULT_CELERY_LOG_LEVEL="INFO"
 DEFAULT_GUNICORN_WORKERS="2"
 
 if [ "$1" = "worker" ]; then
@@ -15,8 +16,15 @@ if [ "$1" = "worker" ]; then
     export CELERY_REDIS_PORT="$DEFAULT_CELERY_REDIS_PORT"
   fi
 
+  # Set celery log level to default if unset
+  if [ -z "$CELERY_LOG_LEVEL" ]; then
+    export CELERY_LOG_LEVEL="$DEFAULT_CELERY_LOG_LEVEL"
+  else
+    export CELERY_LOG_LEVEL="$(echo $CELERY_LOG_LEVEL | tr '[a-z]' '[A-Z]')"
+  fi
+
   # Run celery
-  C_FORCE_ROOT=1 celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l INFO -E
+  C_FORCE_ROOT=1 celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l "$CELERY_LOG_LEVEL" -E
 
 elif [ "$1" = "server" ]; then
 
