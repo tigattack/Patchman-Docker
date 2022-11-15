@@ -32,11 +32,11 @@ ADMINS = (
 DATABASES = {
     "default": {
         "ENGINE": f"django.db.backends.{env('DB_ENGINE')}",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        "NAME": f"{env('DB_NAME')}",
+        "USER": f"{env('DB_USER')}",
+        "PASSWORD": f"{env('DB_PASSWORD')}",
+        "HOST": f"{env('DB_HOST')}",
+        "PORT": f"{env('DB_PORT')}",
         "STORAGE_ENGINE": "INNODB",
         "CHARSET" : "utf8"
     }
