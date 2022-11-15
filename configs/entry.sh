@@ -15,10 +15,8 @@ if [ "$1" = "worker" ]; then
 
 elif [ "$1" = "server" ]; then
 
-  # Prepare DB & app
-  ./manage.py makemigrations
+  # Prepare DB
   ./manage.py migrate --run-syncdb
-  ./manage.py collectstatic --noinput --clear
 
   # Create Django superuser
   # This exists because there's no '--noinput' flag in Django 2, which patchman is based on.

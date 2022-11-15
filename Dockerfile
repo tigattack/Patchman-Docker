@@ -44,6 +44,7 @@ RUN \
     $EXTRA_PY_DEPS -r "${APPDIR}/requirements.txt" &&\
   # Install Patchman
   ${APPDIR}/setup.py install &&\
+  ${APPDIR}/manage.py collectstatic --noinput &&\
   # Remove build deps
   apk del --purge .build-deps
 
