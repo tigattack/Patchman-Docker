@@ -1,42 +1,14 @@
 version: '3'
-
 services:
-    nginx:
-        image: nginx:stable-alpine
-        volumes:
-            - app_data:/usr/share/nginx/html/patchman_media:ro
-            - ./etc/nginx/conf.d:/etc/nginx/conf.d:ro
-        depends_on:
-           - patchman
-        ports:
-          - "80:80"
-
-    patchman:
-        image: uqlpatchman
-        volumes:
-            - app_data:/patchman/static:rw
-        networks:
-            - default
-        ports:
-          - "8080:80"
-        environment:
-          - ADMINNAME=admin
-          - ADMINEMAIL=admin@email.com
-          - DBNAME=patchman
-          - DBUSER=patchman
-          - DBPW=coolpw
-          - DBHOST=mysql
-          - SECRETKEY=bananarama
-          - ADMINACC=admin
-          - ADMINPW=admin
-        depends_on:
-          - mysql
-
-    mysql:
-      image: mysql:5.7
-      environment:
-        - MYSQL_ROOT_PASSWORD=coolpw
-
-volumes:
-    app_data:
-        driver: local
+  patchman:
+    image: ghcr.io/tigattack/patchman
+    restart: unless-stopped
+    ports: [8080:80]
+    environment:
+      ADMIN_USERNAME: myname
+      ADMIN_EMAIL: contact@me.com
+      ADMIN_PASSWORD: SuperSecurePassword!
+      SECRET_KEY: SuperSecureKey!
+    # Only needed if using sqlite:
+    volumes:
+      - ./database:/app/db/
