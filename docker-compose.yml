@@ -10,6 +10,10 @@ services:
         condition: service_healthy
     env_file:
       - .env
+    labels:
+      ofelia.enabled: ${PATCHMAN_MAINTENANCE_ENABLED:-true}
+      ofelia.job-exec.datecron.schedule: ${PATCHMAN_MAINTENANCE_SCHEDULE:-@daily}
+      ofelia.job-exec.datecron.command: "patchman -a"
 
   worker:
     image: ghcr.io/tigattack/patchman
@@ -52,6 +56,15 @@ services:
         - "mysqladmin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
       interval: 10s
       retries: 20
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      server:
+        condition: service_healthy
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
 
 volumes:
   database:
