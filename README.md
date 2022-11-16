@@ -77,14 +77,16 @@ However, you can use an external/different database if you wish. To do so, confi
 
 ### Advanced Configuration & Debugging
 
-| Name                | Description                                                                                        | Default |
-|---------------------|----------------------------------------------------------------------------------------------------|---------|
-| `DJANGO_DEBUG`      | Enable/disable Django debug.                                                                       | `False` |
-| `DJANGO_LOGLEVEL`   | Set Django's log level.                                                                            | `INFO`  |
-| `GUNICORN_WORKERS`  | Numbers of Gunicorn (web server) workers.                                                          | `2`     |
-| `CELERY_REDIS_HOST` | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server. | `redis` |
-| `CELERY_REDIS_PORT` | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.    | `6379`  |
-| `CELERY_LOG_LEVEL`  | Set Celery's log level.                                                                            | `INFO`  |
+| Name                | Description                                                                                        | Default     |
+|---------------------|----------------------------------------------------------------------------------------------------|-------------|
+| `DJANGO_DEBUG`      | Enable/disable Django debug.                                                                       | `False`     |
+| `DJANGO_LOGLEVEL`   | Set Django's log level.                                                                            | `INFO`      |
+| `GUNICORN_WORKERS`  | Numbers of Gunicorn (web server) workers.                                                          | `2`         |
+| `CELERY_REDIS_HOST` | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server. | `redis`     |
+| `CELERY_REDIS_PORT` | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.    | `6379`      |
+| `CELERY_LOG_LEVEL`  | Set Celery's log level.                                                                            | `INFO`      |
+| `MEMCACHED_HOST`    | memcached server IP/name.                                                                          | `memcached` |
+| `MEMCACHED_PORT`    | memcached server port.                                                                             | `11211`     |
 
 ## Credits
 
