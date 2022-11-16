@@ -27,6 +27,7 @@ services:
 
   redis:
     image: redis:alpine
+    command: --loglevel warning
     restart: unless-stopped
     healthcheck:
       test:
