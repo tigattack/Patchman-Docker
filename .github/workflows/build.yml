@@ -48,3 +48,24 @@ jobs:
         cache-to: type=gha,mode=max
         build-args: |
           BUILD_DATE=${{ env.BUILD_DATE }}
+
+    # https://github.com/orgs/community/discussions/26716#discussioncomment-3253034
+    - name: Prune untagged images
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ secrets.DELETE_PACKAGES_TOKEN }}
+        script: |
+          const response = await github.request("GET /${{ env.OWNER }}/packages/container/${{ env.PACKAGE_NAME }}/versions",
+            { per_page: ${{ env.PER_PAGE }}
+          });
+          for(version of response.data) {
+              if (version.metadata.container.tags.length == 0) {
+                  console.log("delete " + version.id)
+                  const deleteResponse = await github.request("DELETE /${{ env.OWNER }}/packages/container/${{ env.PACKAGE_NAME }}/versions/" + version.id, { });
+                  console.log("status " + deleteResponse.status)
+              }
+          }
+      env:
+        OWNER: user
+        PACKAGE_NAME: ghcr.io/tigattack/patchman
+        PER_PAGE: 100
