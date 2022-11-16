@@ -67,5 +67,5 @@ jobs:
           }
       env:
         OWNER: user
-        PACKAGE_NAME: ghcr.io/tigattack/patchman
+        PACKAGE_NAME: patchman
         PER_PAGE: 100
