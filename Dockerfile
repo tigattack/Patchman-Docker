@@ -53,9 +53,9 @@ WORKDIR "$APPDIR"
 
 EXPOSE 80
 HEALTHCHECK CMD [ "/healthcheck.sh" ] \
-  --interval=30s \
+  --interval=20s \
   --timeout=10s \
   --start-period=60s \
-  --retries=3
+  --retries=5
 
 ENTRYPOINT ["/entry.sh"]
