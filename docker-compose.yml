@@ -44,6 +44,12 @@ services:
   mariadb:
     image: mariadb:10.9-jammy
     restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "mysqladmin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
+      interval: 10s
+      retries: 20
     environment:
       MYSQL_RANDOM_ROOT_PASSWORD: true
       MYSQL_DATABASE: ${DB_NAME:-patchman}
@@ -51,12 +57,6 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
     volumes:
       - database:/var/lib/mysql
-    healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "mysqladmin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
-      interval: 10s
-      retries: 20
 
   scheduler:
     image: mcuadros/ofelia:latest
@@ -66,6 +66,11 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/scheduler-error-logs:/reports
+    labels:
+      ofelia.save: true
+      ofelia.save-only-on-error: true
+      ofelia.save-folder: /reports
 
 volumes:
   database:

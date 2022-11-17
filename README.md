@@ -17,13 +17,13 @@ For next steps, you'll need to configure your Patchman clients. You can find ins
 
 ### Scheduled Maintenance
 
-The supplied `docker-compose.yml` includes a `scheduler` service. This makes use of [ofelia](https://github.com/mcuadros/ofelia).
+The supplied `docker-compose.yml` includes a `scheduler` service which executes Patchman maintenance operations on a predefined schedule.
 
-The scheduler is used to run `patchman -a` on a predefined schedule. See below for what this does.
+If the scheduler encounters any errors when performing Patchman maintenance, it will save logs to `./scheduler-error-logs`. You can also configure Slack and SMTP notifications; see [here](https://github.com/mcuadros/ofelia#logging) for information.
 
 See the Environment Variables section below for the default schedule and how to change it to your preference.
 
-The `patchman -a` command performs the following actions:
+Patchman maintenance (executed with `patchman -a`) includes the following operations:
 
 - Refresh repositories
 - Find host updates
