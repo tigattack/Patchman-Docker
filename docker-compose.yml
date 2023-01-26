@@ -42,7 +42,7 @@ services:
       - redis:/data
 
   mariadb:
-    image: mariadb:10.9-jammy
+    image: mariadb:10.10-jammy
     restart: unless-stopped
     healthcheck:
       test:
