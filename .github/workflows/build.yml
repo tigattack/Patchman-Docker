@@ -30,11 +30,18 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Define build args
+      # This is all horrible but it works™️
       run: |
         echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
-        BRANCH="${GITHUB_REF#refs/heads/}"
+
+        if [[ "${{ github.event_name }}" == 'push' || "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
+          BRANCH="${GITHUB_REF#refs/heads/}"
+        elif [[ "${{ github.event_name }}" == 'pull_request' ]]; then
+          BRANCH="pr${{ github.event.number }}"
+        fi
+
         PATCHMAN_VERSION="$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')"
-        if [ "$BRANCH" = "main" ]; then
+        if [[ "$BRANCH" == "main" ]]; then
           echo "TAGS=ghcr.io/tigattack/patchman:$PATCHMAN_VERSION,ghcr.io/tigattack/patchman:latest" >> $GITHUB_ENV
         else
           echo "TAGS=ghcr.io/tigattack/patchman:$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
