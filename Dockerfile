@@ -3,6 +3,7 @@ FROM python:3.9-alpine
 ARG BUILD_DATE
 
 # Git tag such as "v1.2.3"
+# renovate: datasource=github-tags depName=furlongm/patchman
 ARG PATCHMAN_VERSION="v2.0.7"
 ARG EXTRA_PY_DEPS="celery==5.2.7 \
   django-environ==0.9.0 \
