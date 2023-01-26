@@ -33,10 +33,11 @@ jobs:
       run: |
         echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_ENV
         BRANCH="${GITHUB_REF#refs/heads/}"
+        PATCHMAN_VERSION="$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')"
         if [ "$BRANCH" = "main" ]; then
-          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+          echo "TAGS=ghcr.io/tigattack/patchman:$PATCHMAN_VERSION,ghcr.io/tigattack/patchman:latest" >> $GITHUB_ENV
         else
-          echo "IMAGE_TAG=$BRANCH" >> $GITHUB_ENV
+          echo "TAGS=ghcr.io/tigattack/patchman:$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
         fi
 
     - name: Build & Publish image
@@ -45,7 +46,7 @@ jobs:
       with:
         context: .
         push: ${{ github.event_name != 'pull_request' || github.event.inputs.push == 'true' }}
-        tags: ghcr.io/tigattack/patchman:${{ env.IMAGE_TAG }}
+        tags: ${{ env.TAGS }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
