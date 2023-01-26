@@ -1,8 +1,9 @@
 FROM python:3.9-alpine
 
 ARG BUILD_DATE
-# Branch name or tag like "tags/v2.0.3"
-ARG BRANCH="master"
+
+# Git tag such as "v1.2.3"
+ARG PATCHMAN_VERSION="v2.0.7"
 ARG EXTRA_PY_DEPS="celery==5.2.7 \
   django-environ==0.9.0 \
   gunicorn==20.1.0 \
@@ -23,7 +24,7 @@ LABEL org.opencontainers.image.description="Alpine-based Patchman container imag
 LABEL org.opencontainers.image.url="https://github.com/furlongm/patchman"
 LABEL org.opencontainers.image.documentation="https://github.com/tigattack/Patchman-Docker/blob/main/README.md"
 LABEL org.opencontainers.image.source="https://github.com/tigattack/Patchman-Docker"
-LABEL org.opencontainers.image.version=$BRANCH
+LABEL org.opencontainers.image.version=$PATCHMAN_VERSION
 LABEL org.opencontainers.image.created=$BUILD_DATE
 
 RUN \
@@ -36,7 +37,7 @@ RUN \
     mariadb-connector-c-dev &&\
   # Clone repo, checkout version, and enter directory
   git clone https://github.com/furlongm/patchman.git "$APPDIR" && \
-  git --git-dir "${APPDIR}/.git" checkout $BRANCH -b execbranch &&\
+  git --git-dir "${APPDIR}/.git" checkout tags/$PATCHMAN_VERSION -b execbranch &&\
   cd "$APPDIR" &&\
   # Build deps
   apk add --no-cache --virtual .build-deps build-base &&\
