@@ -47,7 +47,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "mysqladmin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
+        - "mariadb-admin ping -u $$MYSQL_USER -p$$MYSQL_PASSWORD | grep 'mysqld is alive' || exit 1"
       interval: 10s
       retries: 20
     environment:
