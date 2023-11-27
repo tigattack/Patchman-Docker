@@ -4,7 +4,7 @@ ARG BUILD_DATE
 
 # Git tag such as "v1.2.3"
 # renovate: datasource=github-tags depName=furlongm/patchman
-ARG PATCHMAN_VERSION="v2.0.14"
+ARG PATCHMAN_VERSION="v2.0.15"
 ARG EXTRA_PY_DEPS="celery==5.2.7 \
   django-environ==0.9.0 \
   gunicorn==20.1.0 \
