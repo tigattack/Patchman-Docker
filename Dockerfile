@@ -42,8 +42,11 @@ RUN \
   cd "$APPDIR" &&\
   # Build deps
   apk add --no-cache --virtual .build-deps build-base &&\
+  # Hacky temporary workaround to cython=3 & pyyaml=6 build failure
+  # https://github.com/yaml/pyyaml/issues/724
+  echo "cython<3" > /tmp/constraint.txt &&\
   # Py deps
-  pip install --no-cache-dir --no-warn-script-location \
+  PIP_CONSTRAINT=/tmp/constraint.txt pip install --no-cache-dir --no-warn-script-location \
     $EXTRA_PY_DEPS -r "${APPDIR}/requirements.txt" &&\
   # Install Patchman
   ${APPDIR}/setup.py install &&\
