@@ -38,26 +38,18 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Define build args
-      # This is all horrible but it works™️
       run: |
-        if [[ "${{ github.event_name }}" == 'push' || "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
-          BRANCH="${GITHUB_REF#refs/heads/}"
-        elif [[ "${{ github.event_name }}" == 'pull_request' ]]; then
-          BRANCH="pr${{ github.event.number }}"
-        fi
-
-        PATCHMAN_VERSION="$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')"
-        if [[ "$BRANCH" == "main" ]]; then
-          echo "TAGS=$PATCHMAN_VERSION,latest" >> $GITHUB_ENV
-        else
-          echo "TAGS=$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
-        fi
+        echo "VERSION=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_ENV
 
     - uses: docker/metadata-action@v5
       id: meta
       with:
         images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-        tags: ${{ env.TAGS }}
+        tags: |
+            type=semver,pattern={{version}},value=${{ env.VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.VERSION }}
+            type=semver,pattern={{major}},value=${{ env.VERSION }}
+            type=ref,event=pr
 
     - name: Build and push image
       uses: docker/build-push-action@v5
