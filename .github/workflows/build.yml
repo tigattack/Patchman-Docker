@@ -40,8 +40,6 @@ jobs:
     - name: Define build args
       # This is all horrible but it works™️
       run: |
-        IMAGE="${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}"
-
         if [[ "${{ github.event_name }}" == 'push' || "${{ github.event_name }}" == 'workflow_dispatch' ]]; then
           BRANCH="${GITHUB_REF#refs/heads/}"
         elif [[ "${{ github.event_name }}" == 'pull_request' ]]; then
@@ -50,9 +48,9 @@ jobs:
 
         PATCHMAN_VERSION="$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')"
         if [[ "$BRANCH" == "main" ]]; then
-          echo "TAGS=$IMAGE:$PATCHMAN_VERSION,$IMAGE:latest" >> $GITHUB_ENV
+          echo "TAGS=$PATCHMAN_VERSION,latest" >> $GITHUB_ENV
         else
-          echo "TAGS=$IMAGE:$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
+          echo "TAGS=$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
         fi
 
     - uses: docker/metadata-action@v5
