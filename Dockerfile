@@ -1,7 +1,5 @@
 FROM python:3.9-alpine
 
-ARG BUILD_DATE
-
 # Git tag such as "v1.2.3"
 # renovate: datasource=github-tags depName=furlongm/patchman
 ARG PATCHMAN_VERSION="v3.0.6"
