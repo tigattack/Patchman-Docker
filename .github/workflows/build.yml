@@ -12,6 +12,10 @@ on:
         required: false
         default: 'false'
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: patchman
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,7 +28,7 @@ jobs:
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: ${{ env.REGISTRY }}
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -46,13 +50,20 @@ jobs:
           echo "TAGS=ghcr.io/tigattack/patchman:$PATCHMAN_VERSION-$BRANCH" >> $GITHUB_ENV
         fi
 
-    - name: Build & Publish image
-      id: docker_build
+    - uses: docker/metadata-action@v5
+      id: meta
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: ${{ env.TAGS }}
+
+    - name: Build and push image
       uses: docker/build-push-action@v5
       with:
         context: .
         push: ${{ github.event.inputs.push != 'false' }}
-        tags: ${{ env.TAGS }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        annotations: ${{ steps.meta.outputs.annotations }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         build-args: |
@@ -76,5 +87,5 @@ jobs:
           }
       env:
         OWNER: user
-        PACKAGE_NAME: patchman
+        PACKAGE_NAME: ${{ env.IMAGE_NAME }}
         PER_PAGE: 100
