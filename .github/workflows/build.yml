@@ -64,7 +64,7 @@ jobs:
     - name: Build and push image
       uses: docker/build-push-action@v5
       with:
-        push: ${{ inputs.push }}
+        push: ${{ inputs.push != 'false' }} # is null if trigger != workflow_dispatch
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
