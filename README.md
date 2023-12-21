@@ -7,7 +7,7 @@ It also has a modified host page to add a separate section for security updates.
 ## Getting Started
 
 1. Download `docker-compose.yml` and `.env`
-2. Add your configuration in `.env` (see Environment Variables below)
+2. Add your configuration in `.env` (see [Environment Variables](#environment-variables) below)
 3. Run `docker compose up -d` or `docker-compose up -d` (old version)
 4. Run `docker compose exec -it server patchman-manage createsuperuser` and enter the same ADMIN details you configured in `.env`
 5. Run `docker compose logs mariadb 2>&1 | grep GENERATED` to get your generated MariaDB root password. Store this somewhere safe.
@@ -21,7 +21,7 @@ The supplied `docker-compose.yml` includes a `scheduler` service which executes 
 
 If the scheduler encounters any errors when performing Patchman maintenance, it will save logs to `./scheduler-error-logs`. You can also configure Slack and SMTP notifications; see [here](https://github.com/mcuadros/ofelia#logging) for information.
 
-See the Environment Variables section below for the default schedule and how to change it to your preference.
+See the [Environment Variables](#environment-variables) section below for the default schedule and how to change it to your preference.
 
 Patchman maintenance (executed with `patchman -a`) includes the following operations:
 
@@ -32,7 +32,7 @@ Patchman maintenance (executed with `patchman -a`) includes the following operat
 - Perform some sanity checks on the database and clean unused entries
 - Perform reverse DNS checks if enabled per-host
 
-\* There are usually no reports to process since they are processed asynchronously and on-the-fly by the `worker` service.
+_\* Reports should rarely, if ever, be pending for any significant duration since they are expected to be processed by the `worker` service in an asynchronous manner upon subsmission._
 
 ### MySQL/MariaDB
 
