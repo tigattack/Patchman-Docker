@@ -70,24 +70,3 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         provenance: false
-
-    # https://github.com/orgs/community/discussions/26716#discussioncomment-3253034
-    - name: Prune untagged images
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ secrets.DELETE_PACKAGES_TOKEN }}
-        script: |
-          const response = await github.request("GET /${{ env.OWNER }}/packages/container/${{ env.PACKAGE_NAME }}/versions",
-            { per_page: ${{ env.PER_PAGE }}
-          });
-          for(version of response.data) {
-              if (version.metadata.container.tags.length == 0) {
-                  console.log("delete " + version.id)
-                  const deleteResponse = await github.request("DELETE /${{ env.OWNER }}/packages/container/${{ env.PACKAGE_NAME }}/versions/" + version.id, { });
-                  console.log("status " + deleteResponse.status)
-              }
-          }
-      env:
-        OWNER: user
-        PACKAGE_NAME: ${{ env.IMAGE_NAME }}
-        PER_PAGE: 100
