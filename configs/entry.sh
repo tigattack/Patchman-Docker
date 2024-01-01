@@ -19,6 +19,7 @@ elif [ "$1" = "server" ]; then
 
   # Prepare DB
   ${APPDIR}/manage.py migrate --run-syncdb
+  ${APPDIR}/manage.py migrate --run-syncdb --fake-initial
   # Quietly collect static files
   ${APPDIR}/manage.py collectstatic --noinput --clear >/dev/null
 
