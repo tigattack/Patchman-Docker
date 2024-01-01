@@ -3,13 +3,6 @@ FROM python:3.9-alpine
 # Git tag such as "v1.2.3"
 # renovate: datasource=github-tags depName=furlongm/patchman
 ARG PATCHMAN_VERSION="v3.0.6"
-ARG EXTRA_PY_DEPS="celery==5.2.7 \
-  django-environ==0.9.0 \
-  gunicorn==20.1.0 \
-  mysqlclient==2.1.1 \
-  redis==4.3.4 \
-  psycopg[binary]==3.1.4 \
-  whitenoise==3.3.1"
 
 ENV APPDIR="/app"
 ENV CELERY_REDIS_HOST="redis"
@@ -25,6 +18,8 @@ LABEL org.opencontainers.image.documentation="https://github.com/tigattack/Patch
 LABEL org.opencontainers.image.source="https://github.com/tigattack/Patchman-Docker"
 LABEL org.opencontainers.image.version=$PATCHMAN_VERSION
 LABEL org.opencontainers.image.created=$BUILD_DATE
+
+COPY requirements.txt /requirements.txt
 
 RUN \
   # Required deps
@@ -44,8 +39,12 @@ RUN \
   # https://github.com/yaml/pyyaml/issues/724
   echo "cython<3" > /tmp/constraint.txt &&\
   # Py deps
-  PIP_CONSTRAINT=/tmp/constraint.txt pip install --no-cache-dir --no-warn-script-location \
-    $EXTRA_PY_DEPS -r "${APPDIR}/requirements.txt" &&\
+  mv /requirements.txt "${APPDIR}/requirements-extra.txt" &&\
+  PIP_CONSTRAINT=/tmp/constraint.txt pip install \
+    --no-cache-dir \
+    --no-warn-script-location \
+    -r "${APPDIR}/requirements-extra.txt" \
+    -r "${APPDIR}/requirements.txt" &&\
   # Install Patchman
   ${APPDIR}/setup.py install &&\
   # Remove build deps
