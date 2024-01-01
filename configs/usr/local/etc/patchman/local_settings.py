@@ -69,7 +69,7 @@ DAYS_WITHOUT_REPORT = env("DAYS_WITHOUT_REPORT")
 RUN_GUNICORN = True
 
 # Copy patchman media from these directories
-STATICFILES_DIRS = ("/app/patchman/static/",)
+STATIC_ROOT = ("/app/patchman/static/",)
 
 # Enable Celery
 USE_ASYNC_PROCESSING = True
