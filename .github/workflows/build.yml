@@ -79,7 +79,7 @@ jobs:
           docker load --input /tmp/patchman-image.tar
           docker image ls -a    
 
-      - name: Docker Compose with Tests Action
+      - name: Run Docker Compose
         uses: adambirds/docker-compose-action@v1.3.0
         with:
           down-flags: "--volumes"
