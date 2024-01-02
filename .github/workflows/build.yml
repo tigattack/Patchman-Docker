@@ -65,7 +65,7 @@ jobs:
     - name: Test run Docker Compose
       uses: adambirds/docker-compose-action@v1.3.0
       with:
-        compose-file: docker-compose-test.yml
+        compose-file: .github/filesdocker-compose-test.yml
         down-flags: "--volumes"
       env:
         IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
