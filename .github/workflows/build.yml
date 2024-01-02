@@ -53,7 +53,7 @@ jobs:
       uses: docker/build-push-action@v5
       id: build
       with:
-        load: true
+        outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=false
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
@@ -65,11 +65,12 @@ jobs:
     - name: Test run Docker Compose
       uses: adambirds/docker-compose-action@v1.3.0
       with:
-        compose-file: .github/files/docker-compose-test.yml
+        compose-file: docker-compose-test.yml
         down-flags: "--volumes"
       env:
         IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
+        PWD: ${{ github.workspace }}/.github/files
 
     - name: Export image digest
       run: |
@@ -77,10 +78,14 @@ jobs:
         digest="${{ steps.build.outputs.digest }}"
         touch "/tmp/digests/${digest#sha256:}"
 
+    - name: Get platform name with safe characters
+      run: |
+        echo "PLATFORM_SUBST=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
+
     - name: Upload image digest
       uses: actions/upload-artifact@v4
       with:
-        name: digests-${{ matrix.platform }}
+        name: digests-${{ env.PLATFORM_SUBST }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1
