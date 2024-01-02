@@ -53,7 +53,7 @@ services:
       interval: 10s
       retries: 20
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: true
+      MYSQL_RANDOM_ROOT_PASSWORD: 'true'
       MYSQL_DATABASE: ${DB_NAME:-patchman}
       MYSQL_USER: ${DB_USER:-patchman}
       MYSQL_PASSWORD: ${DB_PASSWORD:-changeme}
