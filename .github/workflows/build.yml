@@ -25,17 +25,13 @@ jobs:
       contents: read
     strategy:
       matrix:
-        include:
-          - platform_name: linux/amd64
-            platform_safe_name: linux_amd64
-          - platform_name: linux/arm64
-            platform_safe_name: linux_arm64
+        platform: [linux/amd64, linux/arm64]
     steps:
     - uses: actions/checkout@v4
 
     - uses: docker/setup-qemu-action@v3
       with:
-        platforms: ${{ matrix.platform_name }}
+        platforms: ${{ matrix.platform }}
 
     - uses: docker/setup-buildx-action@v3
 
@@ -61,7 +57,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
-        platforms: ${{ matrix.platform_name }}
+        platforms: ${{ matrix.platform }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         provenance: false
@@ -73,7 +69,7 @@ jobs:
         down-flags: "--volumes"
       env:
         IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-        IMAGE_PLATFORM: ${{ matrix.platform_name }}
+        IMAGE_PLATFORM: ${{ matrix.platform }}
         PWD: ${{ github.workspace }}/.github/files
 
     - name: Export image digest
@@ -82,10 +78,14 @@ jobs:
         digest="${{ steps.build.outputs.digest }}"
         touch "/tmp/digests/${digest#sha256:}"
 
+    - name: Get platform name with safe characters
+      run: |
+        echo "PLATFORM_SUBST=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
+
     - name: Upload image digest
       uses: actions/upload-artifact@v4
       with:
-        name: digests-${{ matrix.platform_safe_name }}
+        name: digests-${{ env.PLATFORM_SUBST }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1
@@ -100,13 +100,13 @@ jobs:
       - name: Download linux/amd64 image digests
         uses: actions/download-artifact@v4
         with:
-          name: digests-linux_amd64
+          name: digests-linux/amd64
           path: /tmp/digests
 
       - name: Download linux/arm64 image digests
         uses: actions/download-artifact@v4
         with:
-          name: digests-linux_arm64
+          name: digests-linux/arm64
           path: /tmp/digests
 
       - uses: docker/setup-buildx-action@v3
