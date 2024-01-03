@@ -65,7 +65,7 @@ jobs:
     - name: Parse first image tag as tag to test
       run: |
         docker image ls
-        echo "TEST_TAG=$(echo ${{ steps.meta.outputs.json }} | jq -r '.tags[0]')" >> $GITHUB_ENV
+        echo "TEST_TAG=$(echo '${{ steps.meta.outputs.json }}' | jq -r '.tags[0]')" >> $GITHUB_ENV
 
     - name: Test run Docker Compose
       uses: adambirds/docker-compose-action@v1.3.0
