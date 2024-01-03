@@ -56,7 +56,8 @@ jobs:
       id: build
       with:
         outputs: type=image,name=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
-        tags: ${{ steps.meta.outputs.tags }}
+        # Specifying tags here causes 'can't push tagged ref ghcr.io/tigattack/patchman:<tag> by digest'
+        # tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
         platforms: ${{ matrix.platform }}
