@@ -145,5 +145,5 @@ jobs:
 
       - name: Inspect and push new multi-platform image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:$(echo ${{ needs.build.outputs.meta_json }} | jq -r '.tags[0]'))
+          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:$(echo '${{ needs.build.outputs.meta_json }}' | jq -r '.tags[0]'))
           docker push --all-tags ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
