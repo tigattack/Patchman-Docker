@@ -10,7 +10,7 @@ services:
       mariadb:
         condition: service_healthy
     env_file:
-      - .env-test
+      - .env
     labels:
       ofelia.enabled: ${PATCHMAN_MAINTENANCE_ENABLED:-true}
       ofelia.job-exec.datecron.schedule: ${PATCHMAN_MAINTENANCE_SCHEDULE:-@daily}
@@ -25,7 +25,7 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - .env-test
+      - .env
 
   redis:
     image: redis:alpine

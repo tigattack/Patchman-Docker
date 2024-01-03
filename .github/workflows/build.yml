@@ -69,13 +69,18 @@ jobs:
 
     - name: Test run Docker Compose
       uses: adambirds/docker-compose-action@v1.3.0
+      id: test
       with:
-        compose-file: .github/files/docker-compose-test.yml
+        compose-file: .github/test/docker-compose.yml
         down-flags: "--volumes"
       env:
         IMAGE: ${{ env.TEST_IMAGE }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
-        PWD: ${{ github.workspace }}/.github/files
+        PWD: ${{ github.workspace }}/.github/test
+
+    - name: test
+      if: always() && (steps.test.outcome == 'failure')
+      run: docker ps
 
     - name: Export image digest
       run: |
