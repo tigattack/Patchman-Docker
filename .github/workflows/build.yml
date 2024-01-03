@@ -44,7 +44,7 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Define build args
+    - name: Parse Patchman version
       run: |
         echo "VERSION=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_ENV
 
