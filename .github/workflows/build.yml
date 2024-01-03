@@ -80,7 +80,7 @@ jobs:
 
     - name: test
       if: always() && (steps.test.outcome == 'failure')
-      run: docker ps
+      run: docker ps -a
 
     - name: Export image digest
       run: |
