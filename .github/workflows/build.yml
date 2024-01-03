@@ -69,8 +69,8 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
         platforms: ${{ matrix.platform }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+        cache-from: type=gha,scope=buildkit-${{ matrix.platform }}
+        cache-to: type=gha,scope=buildkit-${{ matrix.platform }},mode=max
         provenance: false
 
     - name: Test run Docker Compose
