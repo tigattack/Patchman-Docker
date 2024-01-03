@@ -6,12 +6,6 @@ on:
       - main
   pull_request:
   workflow_dispatch:
-    inputs:
-      push:
-        description: 'Push image'
-        required: false
-        type: boolean
-        default: true
 
 env:
   REGISTRY: ghcr.io
