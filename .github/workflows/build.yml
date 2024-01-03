@@ -35,7 +35,7 @@ jobs:
 
     - uses: docker/setup-buildx-action@v3
 
-    - name: Define build args
+    - name: Parse Patchman version
       run: |
         echo "VERSION=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_ENV
 
@@ -79,8 +79,11 @@ jobs:
         PWD: ${{ github.workspace }}/.github/test
 
     - name: test
-      if: always() && (steps.test.outcome == 'failure')
-      run: docker ps -a
+      if: always()
+      run: |
+        docker ps -a
+        cd .github/test
+        docker-compose ps -a
 
     - name: Export image digest
       run: |
@@ -137,6 +140,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
+          ls -lahr ./*
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
