@@ -62,6 +62,11 @@ jobs:
         cache-to: type=gha,mode=max
         provenance: false
 
+
+    - name: List images
+      run: |
+        docker image ls
+
     - name: Test run Docker Compose
       uses: adambirds/docker-compose-action@v1.3.0
       with:
