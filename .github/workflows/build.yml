@@ -140,7 +140,7 @@ jobs:
         working-directory: /tmp/digests
         run: |
           ls -lahr ./*
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "${{ needs.build.outputs.meta_json }}") \
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< '${{ needs.build.outputs.meta_json }}') \
             $(printf '${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
       - name: Inspect and push new multi-platform image
