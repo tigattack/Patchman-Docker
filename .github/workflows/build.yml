@@ -79,7 +79,7 @@ jobs:
         compose-file: .github/test/docker-compose.yml
         down-flags: "--volumes"
       env:
-        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ steps.build.outputs.digest }}
+        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
         PWD: ${{ github.workspace }}/.github/test
 
