@@ -42,6 +42,10 @@ jobs:
       run: |
         echo "VERSION=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_ENV
 
+    - name: Extract branch name
+      id: extract_branch
+      run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
     - uses: docker/metadata-action@v5
       id: meta
       env:
@@ -65,8 +69,10 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
         annotations: ${{ steps.meta.outputs.annotations }}
         platforms: ${{ matrix.platform }}
-        cache-from: type=gha,scope=buildkit-${{ matrix.platform }}
-        cache-to: type=gha,scope=buildkit-${{ matrix.platform }},mode=max
+        cache-from:
+          type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }}
+          type=gha,scope=buildkit-main-${{ matrix.platform }}
+        cache-to: type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }},mode=max
         provenance: false
 
     - name: Test run Docker Compose
