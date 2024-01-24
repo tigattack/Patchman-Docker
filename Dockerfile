@@ -21,6 +21,8 @@ LABEL org.opencontainers.image.created=$BUILD_DATE
 
 COPY requirements.txt /requirements.txt
 
+WORKDIR "$APPDIR"
+
 RUN \
   # Required deps
   apk --no-cache add \
@@ -30,9 +32,8 @@ RUN \
     libxslt-dev \
     mariadb-connector-c-dev &&\
   # Clone repo, checkout version, and enter directory
-  git clone https://github.com/furlongm/patchman.git "$APPDIR" && \
-  git --git-dir "${APPDIR}/.git" checkout tags/$PATCHMAN_VERSION -b execbranch &&\
-  cd "$APPDIR" &&\
+  git clone https://github.com/furlongm/patchman.git . && \
+  git checkout tags/$PATCHMAN_VERSION -b execbranch &&\
   # Build deps
   apk add --no-cache --virtual .build-deps build-base &&\
   # Hacky temporary workaround to cython=3 & pyyaml=6 build failure
@@ -51,7 +52,6 @@ RUN \
   apk del --purge .build-deps
 
 COPY configs/ /
-WORKDIR "$APPDIR"
 
 EXPOSE 80
 HEALTHCHECK CMD [ "/healthcheck.sh" ] \
