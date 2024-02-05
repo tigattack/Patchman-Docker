@@ -48,8 +48,6 @@ jobs:
 
     - uses: docker/metadata-action@v5
       id: meta
-      env:
-        DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
       with:
         images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
         tags: |
