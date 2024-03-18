@@ -2,7 +2,7 @@ FROM python:3.9-alpine
 
 # Git tag such as "v1.2.3"
 # renovate: datasource=github-tags depName=furlongm/patchman
-ARG PATCHMAN_VERSION="v3.0.7"
+ARG PATCHMAN_VERSION="v3.0.8"
 
 ENV APPDIR="/app"
 ENV CELERY_REDIS_HOST="redis"
