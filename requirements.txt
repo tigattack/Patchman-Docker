@@ -1,7 +1,7 @@
 celery==5.3.6
 django-environ==0.11.2
 gunicorn==21.2.0
-mysqlclient==2.1.1
+mysqlclient==2.2.4
 psycopg[binary]==3.1.18
 redis==4.6.0
 whitenoise==6.6
