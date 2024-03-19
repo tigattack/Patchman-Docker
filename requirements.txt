@@ -3,5 +3,5 @@ django-environ==0.11.2
 gunicorn==21.2.0
 mysqlclient==2.2.4
 psycopg[binary]==3.1.18
-redis==4.6.0
+redis==5.0.3
 whitenoise==6.6
