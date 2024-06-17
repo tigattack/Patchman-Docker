@@ -57,7 +57,7 @@ jobs:
             type=ref,event=pr
 
     - name: Build and push image
-      uses: docker/build-push-action@v5
+      uses: docker/build-push-action@v6
       id: build
       with:
         # Push image without tags (i.e. digest only)
