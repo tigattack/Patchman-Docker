@@ -72,6 +72,7 @@ jobs:
           type=gha,scope=buildkit-main-${{ matrix.platform }}
         cache-to: type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }},mode=max
         provenance: false
+        push: ${{ github.event_name != 'pull_request' }}
 
     - name: Test run Docker Compose
       uses: ElParking/docker-compose-action@1.4.5
@@ -80,14 +81,14 @@ jobs:
         compose-file: .github/test/docker-compose.yml
         down-flags: "--volumes"
       env:
-        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+        IMAGE: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
         PWD: ${{ github.workspace }}/.github/test
 
     - name: Print Docker Compose logs
       if: always() && (steps.test.outcome == 'failure')
       env:
-        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+        IMAGE: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
       run: |
         cd .github/test
@@ -118,6 +119,7 @@ jobs:
   merge-push-manifests:
     runs-on: ubuntu-latest
     needs: [build]
+    if: github.event_name != 'pull_request'
     steps:
       - name: Download linux/amd64 image digests
         uses: actions/download-artifact@v4
