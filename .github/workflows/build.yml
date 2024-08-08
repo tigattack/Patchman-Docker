@@ -74,7 +74,7 @@ jobs:
         provenance: false
 
     - name: Test run Docker Compose
-      uses: adambirds/docker-compose-action@v1.3.0
+      uses: ElParking/docker-compose-action@1.4.5
       id: test
       with:
         compose-file: .github/test/docker-compose.yml
@@ -86,10 +86,13 @@ jobs:
 
     - name: Print Docker Compose logs
       if: always() && (steps.test.outcome == 'failure')
+      env:
+        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+        IMAGE_PLATFORM: ${{ matrix.platform }}
       run: |
         cd .github/test
-        docker-compose ps -a
-        docker compose logs
+        docker compose ps -a
+        docker compose logs -t --tail=all
 
     - name: Export image digest
       run: |

@@ -54,10 +54,11 @@ RUN \
 COPY configs/ /
 
 EXPOSE 80
-HEALTHCHECK CMD [ "/healthcheck.sh" ] \
+HEALTHCHECK \
   --interval=20s \
   --timeout=10s \
   --start-period=60s \
-  --retries=5
+  --retries=5 \
+  CMD [ "/healthcheck.sh" ]
 
 ENTRYPOINT ["/entry.sh"]
