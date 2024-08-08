@@ -73,9 +73,9 @@ jobs:
         cache-to: type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }},mode=max
         provenance: false
 
-    - name: Test run Docker Compose
+    - name: Test run Docker Compose with a mariadb
       uses: ElParking/docker-compose-action@1.4.5
-      id: test
+      id: test_mariadb
       with:
         compose-file: .github/test/docker-compose.yml
         down-flags: "--volumes"
@@ -84,13 +84,34 @@ jobs:
         IMAGE_PLATFORM: ${{ matrix.platform }}
         PWD: ${{ github.workspace }}/.github/test
 
-    - name: Print Docker Compose logs
-      if: always() && (steps.test.outcome == 'failure')
+    - name: Print Docker Compose logs for mariadb
+      if: always() && (steps.test_mariadb.outcome == 'failure')
       env:
         IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
         IMAGE_PLATFORM: ${{ matrix.platform }}
       run: |
-        cd .github/test
+        cd .github/test-mariadb
+        docker compose ps -a
+        docker compose logs -t --tail=all
+
+    - name: Test run Docker Compose with a postgresql db
+      uses: ElParking/docker-compose-action@1.4.5
+      id: test_postgres
+      with:
+        compose-file: .github/test-postgres/docker-compose.yml
+        down-flags: "--volumes"
+      env:
+        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+        PWD: ${{ github.workspace }}/.github/test-postgres
+
+    - name: Print Docker Compose logs for postgresql
+      if: always() && (steps.test_postgres.outcome == 'failure')
+      env:
+        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+      run: |
+        cd .github/test-postgres
         docker compose ps -a
         docker compose logs -t --tail=all
 
