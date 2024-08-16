@@ -83,7 +83,7 @@ jobs:
       env:
         IMAGE: "${{ steps.build.outputs.imageid }}"
         IMAGE_PLATFORM: ${{ matrix.platform }}
-        PWD: ${{ github.workspace }}/.github/test
+        PWD: ${{ github.workspace }}/.github/test-mariadb
 
     - name: Print Docker Compose logs for mariadb
       if: always() && (steps.test_mariadb.outcome == 'failure')
