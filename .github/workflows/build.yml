@@ -78,7 +78,7 @@ jobs:
       uses: ElParking/docker-compose-action@1.4.5
       id: test_mariadb
       with:
-        compose-file: .github/test/docker-compose.yml
+        compose-file: .github/test-mariadb/docker-compose.yml
         down-flags: "--volumes"
       env:
         IMAGE: "${{ steps.build.outputs.imageid }}"
