@@ -56,12 +56,72 @@ jobs:
             type=semver,pattern={{major}},value=${{ env.VERSION }},enable={{is_default_branch}}
             type=ref,event=pr
 
-    - name: Build and push image
+    - name: Build image
       uses: docker/build-push-action@v6
       id: build
       with:
+        outputs: type=docker,dest=/tmp/${{ env.IMAGE_NAME }}.tar
+        labels: ${{ steps.meta.outputs.labels }}
+        annotations: ${{ steps.meta.outputs.annotations }}
+        platforms: ${{ matrix.platform }}
+        cache-from:
+          type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }}
+          type=gha,scope=buildkit-main-${{ matrix.platform }}
+        cache-to: type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }},mode=max
+        provenance: false
+
+    - name: Load image into runner docker daemon
+      run: |
+        docker load --input /tmp/${{ env.IMAGE_NAME }}.tar
+
+    - name: Test run Docker Compose with a mariadb
+      uses: ElParking/docker-compose-action@1.4.5
+      id: test_mariadb
+      with:
+        compose-file: .github/test-mariadb/docker-compose.yml
+        down-flags: "--volumes"
+      env:
+        IMAGE: "${{ steps.build.outputs.imageid }}"
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+        PWD: ${{ github.workspace }}/.github/test-mariadb
+
+    - name: Print Docker Compose logs for mariadb
+      if: always() && (steps.test_mariadb.outcome == 'failure')
+      env:
+        IMAGE: "${{ steps.build.outputs.imageid }}"
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+      run: |
+        cd .github/test-mariadb
+        docker compose ps -a
+        docker compose logs -t --tail=all
+
+    - name: Test run Docker Compose with a postgresql db
+      uses: ElParking/docker-compose-action@1.4.5
+      id: test_postgres
+      with:
+        compose-file: .github/test-postgres/docker-compose.yml
+        down-flags: "--volumes"
+      env:
+        IMAGE: "${{ steps.build.outputs.imageid }}"
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+        PWD: ${{ github.workspace }}/.github/test-postgres
+
+    - name: Print Docker Compose logs for postgresql
+      if: always() && (steps.test_postgres.outcome == 'failure')
+      env:
+        IMAGE: "${{ steps.build.outputs.imageid }}"
+        IMAGE_PLATFORM: ${{ matrix.platform }}
+      run: |
+        cd .github/test-postgres
+        docker compose ps -a
+        docker compose logs -t --tail=all
+
+    - name: Build and push image
+      uses: docker/build-push-action@v6
+      id: push-built-image
+      with:
         # Push image without tags (i.e. digest only)
-        outputs: type=image,name=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+        outputs: type=image,name=${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
         # Specifying tags here causes 'can't push tagged ref ghcr.io/tigattack/patchman:<tag> by digest'
         # tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -73,31 +133,10 @@ jobs:
         cache-to: type=gha,scope=buildkit-${{ steps.extract_branch.outputs.branch }}-${{ matrix.platform }},mode=max
         provenance: false
 
-    - name: Test run Docker Compose
-      uses: ElParking/docker-compose-action@1.4.5
-      id: test
-      with:
-        compose-file: .github/test/docker-compose.yml
-        down-flags: "--volumes"
-      env:
-        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-        IMAGE_PLATFORM: ${{ matrix.platform }}
-        PWD: ${{ github.workspace }}/.github/test
-
-    - name: Print Docker Compose logs
-      if: always() && (steps.test.outcome == 'failure')
-      env:
-        IMAGE: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-        IMAGE_PLATFORM: ${{ matrix.platform }}
-      run: |
-        cd .github/test
-        docker compose ps -a
-        docker compose logs -t --tail=all
-
     - name: Export image digest
       run: |
         mkdir -p /tmp/digests
-        digest="${{ steps.build.outputs.digest }}"
+        digest="${{ steps.push-built-image.outputs.digest }}"
         touch "/tmp/digests/${digest#sha256:}"
 
     - name: Get platform name with safe characters
@@ -118,6 +157,7 @@ jobs:
   merge-push-manifests:
     runs-on: ubuntu-latest
     needs: [build]
+    if: github.event_name != 'pull_request'
     steps:
       - name: Download linux/amd64 image digests
         uses: actions/download-artifact@v4

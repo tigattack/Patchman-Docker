@@ -1,0 +1,80 @@
+version: '3'
+services:
+  server:
+    image: "${IMAGE}"
+    platform: "${IMAGE_PLATFORM}"
+    command: server
+    restart: unless-stopped
+    ports: [8081:80]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    labels:
+      ofelia.enabled: ${PATCHMAN_MAINTENANCE_ENABLED:-true}
+      ofelia.job-exec.datecron.schedule: ${PATCHMAN_MAINTENANCE_SCHEDULE:-@daily}
+      ofelia.job-exec.datecron.command: "patchman -a"
+
+  worker:
+    image: "${IMAGE}"
+    platform: "${IMAGE_PLATFORM}"
+    command: worker
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  redis:
+    image: redis:alpine
+    command: --loglevel warning
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "redis-cli ping | grep PONG"
+      interval: 10s
+      retries: 5
+      timeout: 3s
+    sysctls:
+      net.core.somaxconn: '511'
+    volumes:
+      - redis:/data
+
+  postgres:
+    image: postgres:16.3-alpine
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "pg_isready"
+      interval: 10s
+      retries: 20
+    environment:
+      POSTGRES_DB: ${DB_NAME:-patchman}
+      POSTGRES_USER: ${DB_USER:-patchman}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  scheduler:
+    image: mcuadros/ofelia:latest
+    depends_on:
+      server:
+        condition: service_healthy
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${PWD}/scheduler-error-logs:/reports
+    labels:
+      ofelia.save: true
+      ofelia.save-only-on-error: true
+      ofelia.save-folder: /reports
+
+volumes:
+  database:
+    driver: local
+  redis:
+    driver: local
