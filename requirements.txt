@@ -4,4 +4,4 @@ gunicorn==22.0.0
 mysqlclient==2.2.4
 psycopg2-binary==2.9.9
 redis==5.0.8
-whitenoise==6.7.0
+whitenoise==6.8.2
