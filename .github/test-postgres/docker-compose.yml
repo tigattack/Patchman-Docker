@@ -44,7 +44,7 @@ services:
       - redis:/data
 
   postgres:
-    image: postgres:16.3-alpine
+    image: postgres:16.6-alpine
     restart: unless-stopped
     healthcheck:
       test:
