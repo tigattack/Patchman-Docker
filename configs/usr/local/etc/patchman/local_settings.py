@@ -80,7 +80,10 @@ CELERY_BROKER_URL    = f"redis://{env('CELERY_REDIS_HOST')}:{env('CELERY_REDIS_P
 # Configure memcached
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        'LOCATION': f"{env('MEMCACHED_HOST')}:{env('MEMCACHED_PORT')}"
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        'LOCATION': f"{env('MEMCACHED_HOST')}:{env('MEMCACHED_PORT')}",
+        'OPTIONS': {
+            'ignore_exc': True,
+        },
     }
 }
