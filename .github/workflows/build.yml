@@ -116,7 +116,7 @@ jobs:
         docker compose ps -a
         docker compose logs -t --tail=all
 
-    - name: Build and push image
+    - name: Push image
       uses: docker/build-push-action@v6
       id: push-built-image
       with:
