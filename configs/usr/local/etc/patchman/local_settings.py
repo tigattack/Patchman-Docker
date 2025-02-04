@@ -75,7 +75,7 @@ STATIC_ROOT = ("/app/patchman/static/",)
 
 # Enable Celery
 USE_ASYNC_PROCESSING = True
-CELERY_BROKER_URL    = f"redis://{env(('CELERY_REDIS_HOST'))}:{env(('CELERY_REDIS_PORT'))}/0"
+CELERY_BROKER_URL    = f"redis://{env('CELERY_REDIS_HOST')}:{env('CELERY_REDIS_PORT')}/0"
 
 # Configure memcached
 CACHES = {
