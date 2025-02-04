@@ -21,6 +21,8 @@ env = environ.Env(
     DAYS_WITHOUT_REPORT = (int, 14),
     CELERY_REDIS_HOST   = (str),
     CELERY_REDIS_PORT   = (str),
+    MEMCACHED_HOST      = (str, "memcached"),
+    MEMCACHED_PORT      = (str, "11211"),
 )
 
 DEBUG = env("DJANGO_DEBUG")
@@ -73,14 +75,15 @@ STATIC_ROOT = ("/app/patchman/static/",)
 
 # Enable Celery
 USE_ASYNC_PROCESSING = True
-CELERY_BROKER_URL    = f"redis://{env(('CELERY_REDIS_HOST'))}:{env(('CELERY_REDIS_PORT'))}/0"
+CELERY_BROKER_URL    = f"redis://{env('CELERY_REDIS_HOST')}:{env('CELERY_REDIS_PORT')}/0"
 
-# Configure file-based cache
-# Patchman appears to not utilise cache, despite instructing users to configure it.
-# https://github.com/furlongm/patchman/issues/433
+# Configure memcached
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/var/tmp/django_cache",
+        "BACKEND": "django.core.cache.backends.memcached.PyMemcacheCache",
+        'LOCATION': f"{env('MEMCACHED_HOST')}:{env('MEMCACHED_PORT')}",
+        'OPTIONS': {
+            'ignore_exc': True,
+        },
     }
 }

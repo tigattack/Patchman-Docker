@@ -1,6 +1,5 @@
 FROM python:3.9-alpine
 
-# Git tag such as "v1.2.3"
 # renovate: datasource=github-tags depName=furlongm/patchman
 ARG PATCHMAN_VERSION="v3.0.14"
 
@@ -9,15 +8,6 @@ ENV CELERY_REDIS_HOST="redis"
 ENV CELERY_REDIS_PORT="6379"
 ENV CELERY_LOG_LEVEL="INFO"
 ENV GUNICORN_WORKERS="2"
-
-LABEL org.opencontainers.image.authors="tigattack"
-LABEL org.opencontainers.image.title="Patchman"
-LABEL org.opencontainers.image.description="Alpine-based Patchman container image."
-LABEL org.opencontainers.image.url="https://github.com/furlongm/patchman"
-LABEL org.opencontainers.image.documentation="https://github.com/tigattack/Patchman-Docker/blob/main/README.md"
-LABEL org.opencontainers.image.source="https://github.com/tigattack/Patchman-Docker"
-LABEL org.opencontainers.image.version=$PATCHMAN_VERSION
-LABEL org.opencontainers.image.created=$BUILD_DATE
 
 COPY requirements.txt /requirements.txt
 
@@ -40,11 +30,11 @@ RUN \
   # https://github.com/yaml/pyyaml/issues/724
   echo "cython<3" > /tmp/constraint.txt &&\
   # Py deps
-  mv /requirements.txt "${APPDIR}/requirements-extra.txt" &&\
+  mv /requirements.txt "${APPDIR}/requirements-source.txt" &&\
   PIP_CONSTRAINT=/tmp/constraint.txt pip install \
     --no-cache-dir \
     --no-warn-script-location \
-    -r "${APPDIR}/requirements-extra.txt" \
+    -r "${APPDIR}/requirements-source.txt" \
     -r "${APPDIR}/requirements.txt" &&\
   # Install Patchman
   ${APPDIR}/setup.py install &&\
