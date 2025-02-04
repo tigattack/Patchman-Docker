@@ -4,6 +4,10 @@ This is a Dockerised version of [Patchman](https://github.com/furlongm/patchman)
 
 It also has a modified host page to add a separate section for security updates.
 
+> [!WARNING]
+> From tag **3.0.14** onwards, this image requires memcached.  
+> Please see the updated [`docker-compose.yml`](https://github.com/tigattack/Patchman-Docker/blob/main/docker-compose.yml) file and [Advanced Configuration](#advanced-configuration--debugging) for details.
+
 ## Getting Started
 
 1. Download `docker-compose.yml` and `.env`
