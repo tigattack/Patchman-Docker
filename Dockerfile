@@ -30,11 +30,11 @@ RUN \
   # https://github.com/yaml/pyyaml/issues/724
   echo "cython<3" > /tmp/constraint.txt &&\
   # Py deps
-  mv /requirements.txt "${APPDIR}/requirements-extra.txt" &&\
+  mv /requirements.txt "${APPDIR}/requirements-source.txt" &&\
   PIP_CONSTRAINT=/tmp/constraint.txt pip install \
     --no-cache-dir \
     --no-warn-script-location \
-    -r "${APPDIR}/requirements-extra.txt" \
+    -r "${APPDIR}/requirements-source.txt" \
     -r "${APPDIR}/requirements.txt" &&\
   # Install Patchman
   ${APPDIR}/setup.py install &&\
