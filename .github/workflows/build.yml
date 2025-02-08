@@ -10,6 +10,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: patchman
+  docker_compose_down_flags: "--volumes -t=0"
 
 jobs:
   build:
@@ -79,7 +80,7 @@ jobs:
       id: test_mariadb
       with:
         compose-file: .github/test-mariadb/docker-compose.yml
-        down-flags: "--volumes"
+        down-flags: ${{ env.docker_compose_down_flags }}
       env:
         IMAGE: "${{ steps.build.outputs.imageid }}"
         IMAGE_PLATFORM: ${{ matrix.platform }}
@@ -100,7 +101,7 @@ jobs:
       id: test_postgres
       with:
         compose-file: .github/test-postgres/docker-compose.yml
-        down-flags: "--volumes"
+        down-flags: ${{ env.docker_compose_down_flags }}
       env:
         IMAGE: "${{ steps.build.outputs.imageid }}"
         IMAGE_PLATFORM: ${{ matrix.platform }}
@@ -137,12 +138,12 @@ jobs:
 
     - name: Get platform name with safe characters
       run: |
-        echo "PLATFORM_SUBST=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
+        echo "PLATFORM_STR=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
 
     - name: Upload image digest
       uses: actions/upload-artifact@v4
       with:
-        name: digests-${{ env.PLATFORM_SUBST }}
+        name: digests-${{ env.PLATFORM_STR }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1
