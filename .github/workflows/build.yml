@@ -157,13 +157,13 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Download linux/amd64 image digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: digests-linux_amd64
           path: /tmp/digests
 
       - name: Download linux/arm64 image digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: digests-linux_arm64
           path: /tmp/digests
