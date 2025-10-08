@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.14-alpine
 
 # renovate: datasource=github-tags depName=furlongm/patchman
 ARG PATCHMAN_VERSION="v3.0.19"
