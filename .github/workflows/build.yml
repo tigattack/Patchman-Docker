@@ -141,7 +141,7 @@ jobs:
         echo "PLATFORM_STR=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
 
     - name: Upload image digest
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: digests-${{ env.PLATFORM_STR }}
         path: /tmp/digests/*
@@ -157,13 +157,13 @@ jobs:
     if: github.event_name != 'pull_request'
     steps:
       - name: Download linux/amd64 image digests
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: digests-linux_amd64
           path: /tmp/digests
 
       - name: Download linux/arm64 image digests
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: digests-linux_arm64
           path: /tmp/digests
