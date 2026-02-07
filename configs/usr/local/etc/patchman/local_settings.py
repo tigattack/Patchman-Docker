@@ -49,7 +49,6 @@ DATABASES = {
         "PORT": env_get("DB_PORT", "", int) or "",
         "STORAGE_ENGINE": env_get("DB_STORAGE_ENGINE", "INNODB"),
         "CHARSET": env_get("DB_CHARSET", "utf8"),
-        "OPTIONS": env_get("DB_OPTIONS", {"timeout": 30}, dict),
     }
 }
 
