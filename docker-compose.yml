@@ -5,8 +5,6 @@ services:
     restart: unless-stopped
     ports: [8080:80]
     depends_on:
-      memcached:
-        condition: service_healthy
       mariadb:
         condition: service_healthy
     env_file:
@@ -41,17 +39,6 @@ services:
       net.core.somaxconn: '511'
     volumes:
       - redis:/data
-
-  memcached:
-    image: memcached:1.6-alpine
-    restart: unless-stopped
-    healthcheck:
-      test:
-        - "CMD-SHELL"
-        - "echo version | nc -vn -w 1 127.0.0.1 11211"
-      start_period: 5s
-      timeout: 2s
-      interval: 10s
 
   mariadb:
     image: mariadb:11.3-jammy

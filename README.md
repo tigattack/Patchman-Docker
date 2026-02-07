@@ -4,10 +4,6 @@ This is a Dockerised version of [Patchman](https://github.com/furlongm/patchman)
 
 It also has a modified host page to add a separate section for security updates.
 
-> [!WARNING]
-> From tag **3.0.14** onwards, this image requires memcached.  
-> Please see the updated [`docker-compose.yml`](https://github.com/tigattack/Patchman-Docker/blob/main/docker-compose.yml) file and [Advanced Configuration](#advanced-configuration--debugging) for details.
-
 ## Getting Started
 
 1. Download `docker-compose.yml` and `.env`
@@ -89,8 +85,6 @@ However, you can use an external/different database if you wish. To do so, confi
 | `CELERY_REDIS_HOST` | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server. | `redis`     |
 | `CELERY_REDIS_PORT` | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.    | `6379`      |
 | `CELERY_LOG_LEVEL`  | Set Celery's log level.                                                                            | `INFO`      |
-| `MEMCACHED_HOST`    | memcached server IP/name.                                                                          | `memcached` |
-| `MEMCACHED_PORT`    | memcached server port.                                                                             | `11211`     |
 
 ## Credits
 
