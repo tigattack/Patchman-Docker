@@ -1,7 +1,7 @@
-FROM python:3.9-alpine
+FROM python:3.13-alpine
 
 # renovate: datasource=github-tags depName=furlongm/patchman
-ARG PATCHMAN_VERSION="v3.0.19"
+ARG PATCHMAN_VERSION="v4.0.7"
 
 ENV APPDIR="/app"
 ENV CELERY_REDIS_HOST="redis"
@@ -9,9 +9,9 @@ ENV CELERY_REDIS_PORT="6379"
 ENV CELERY_LOG_LEVEL="INFO"
 ENV GUNICORN_WORKERS="2"
 
-COPY requirements.txt /requirements.txt
-
 WORKDIR "$APPDIR"
+
+COPY requirements.txt /requirements-source.txt
 
 RUN \
   # Required deps
@@ -26,18 +26,15 @@ RUN \
   git checkout tags/$PATCHMAN_VERSION -b execbranch &&\
   # Build deps
   apk add --no-cache --virtual .build-deps build-base &&\
-  # Hacky temporary workaround to cython=3 & pyyaml=6 build failure
-  # https://github.com/yaml/pyyaml/issues/724
-  echo "cython<3" > /tmp/constraint.txt &&\
+  mv /requirements-source.txt ./ &&\
   # Py deps
-  mv /requirements.txt "${APPDIR}/requirements-source.txt" &&\
-  PIP_CONSTRAINT=/tmp/constraint.txt pip install \
+  pip install \
     --no-cache-dir \
     --no-warn-script-location \
-    -r "${APPDIR}/requirements-source.txt" \
-    -r "${APPDIR}/requirements.txt" &&\
+    -r requirements-source.txt \
+    -r requirements.txt &&\
   # Install Patchman
-  ${APPDIR}/setup.py install &&\
+  ./setup.py install &&\
   # Remove build deps
   apk del --purge .build-deps
 
