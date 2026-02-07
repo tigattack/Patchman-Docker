@@ -13,13 +13,20 @@ if [ "$1" = "worker" ]; then
   celery_uid="$(id -u celery)"
 
   # Run celery
-  celery -b redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 -A patchman worker -l "$CELERY_LOG_LEVEL" -E --uid $celery_uid
+  celery \
+    --broker redis://${CELERY_REDIS_HOST}:${CELERY_REDIS_PORT}/0 \
+    --app patchman worker \
+    --loglevel "$CELERY_LOG_LEVEL" \
+    --beat \
+    --scheduler django_celery_beat.schedulers:DatabaseScheduler \
+    --task-events \
+    --pool threads \
+    --uid $celery_uid
 
 elif [ "$1" = "server" ]; then
 
   # Prepare DB
   ${APPDIR}/manage.py migrate --run-syncdb
-  ${APPDIR}/manage.py migrate --run-syncdb --fake-initial
   # Quietly collect static files
   ${APPDIR}/manage.py collectstatic --noinput --clear >/dev/null
 
