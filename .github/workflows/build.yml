@@ -40,8 +40,9 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Parse Patchman version
+      id: parse_version
       run: |
-        echo "VERSION=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_ENV
+        echo "version=$(cat Dockerfile | grep 'ARG PATCHMAN_VERSION' | sed -r 's/.*="(.*)"/\1/')" >> $GITHUB_OUTPUT
 
     - name: Extract branch name
       id: extract_branch
@@ -52,9 +53,9 @@ jobs:
       with:
         images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
         tags: |
-            type=semver,pattern={{version}},value=${{ env.VERSION }},enable={{is_default_branch}}
-            type=semver,pattern={{major}}.{{minor}},value=${{ env.VERSION }},enable={{is_default_branch}}
-            type=semver,pattern={{major}},value=${{ env.VERSION }},enable={{is_default_branch}}
+            type=semver,pattern={{version}},value=${{ steps.parse_version.outputs.version }},enable={{is_default_branch}}
+            type=semver,pattern={{major}}.{{minor}},value=${{ steps.parse_version.outputs.version }},enable={{is_default_branch}}
+            type=semver,pattern={{major}},value=${{ steps.parse_version.outputs.version }},enable={{is_default_branch}}
             type=ref,event=pr
 
     - name: Build image
@@ -137,13 +138,14 @@ jobs:
         touch "/tmp/digests/${digest#sha256:}"
 
     - name: Get platform name with safe characters
+      id: platform
       run: |
-        echo "PLATFORM_STR=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_ENV
+        echo "name=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_OUTPUT
 
     - name: Upload image digest
       uses: actions/upload-artifact@v6
       with:
-        name: digests-${{ env.PLATFORM_STR }}
+        name: digests-${{ steps.platform.outputs.name }}
         path: /tmp/digests/*
         if-no-files-found: error
         retention-days: 1
@@ -154,6 +156,8 @@ jobs:
   merge-push-manifests:
     runs-on: ubuntu-latest
     needs: [build]
+    permissions:
+      packages: write
     steps:
       - name: Download linux/amd64 image digests
         uses: actions/download-artifact@v7
