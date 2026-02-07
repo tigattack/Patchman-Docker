@@ -42,24 +42,41 @@ If you wish to set your own password, configure a `MYSQL_ROOT_PASSWORD` environm
 
 ## Environment variables
 
-All environment variables without a default are **required**, unless noted otherwise in the variable's description.
+This Docker image supports configuring any Patchman setting through environment variables. The configuration system intelligently handles type casting for booleans, integers, lists, and dictionaries.
 
-The rest are optional and, if unspecified, will use the listed default.
+### Configuration Methods
 
-| Name                            | Description                                                                                                                                                                                                                                   | Default                                                |
-| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `ADMIN_EMAIL`                   | Administrator email address.                                                                                                                                                                                                                  |                                                        |
-| `ADMIN_USERNAME`                | Administrator username.                                                                                                                                                                                                                       |                                                        |
-| `SECRET_KEY`                    | Patchman's secret key. Create a unique string and don't share it with anybody.                                                                                                                                                                |                                                        |
-| `TIME_ZONE`                     | Time zone for this installation. All choices can be found [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).<br>At time of writing, Patchman does not properly support this. It will work, but you'll receive warnings to STDOUT. | `Etc/UTC`                                              |
-| `LANGUAGE_CODE`                 | Language for this installation. All choices can be found [here](http://www.i18nguy.com/unicode/language-identifiers.html).                                                                                                                    | `en-GB`                                                |
-| `MAX_MIRRORS`                   | Maximum number of mirrors to add or refresh per repo.                                                                                                                                                                                         | `5`                                                    |
-| `DAYS_WITHOUT_REPORT`           | Number of days to wait before notifying users that a host has not reported.                                                                                                                                                                   | `14`                                                   |
-| `ALLOWED_HOSTS`                 | Hosts allowed to access Patchman.                                                                                                                                                                                                             | `['*']`                                                |
-| `PATCHMAN_MAINTENANCE_ENABLED`  | Enable/disable the scheduled maintenance action.                                                                                                                                                                                              | `true`                                                 |
-| `PATCHMAN_MAINTENANCE_SCHEDULE` | The cron schedule for the maintenance action.<br>See [here](https://pkg.go.dev/github.com/robfig/cron) for the scheduling format (go-cron).                                                                                                   | `@daily`                                               |
-| `CSRF_TRUSTED_ORIGINS`          | Trusted origin for CSRF protection. Example: `https://patchman.yourdomain.com`                                                                                                                                                                | `['http://localhost']`                                 |
-| `ERRATA_OS_UPDATES`             | list of errata sources to update, remove unwanted ones to improve performance                                                                                                                                                                 | `['yum', 'rocky', 'alma', 'arch', 'ubuntu', 'debian']` |
+1. **Direct Setting Override**: Use the exact setting name from Patchman's configuration
+   - Example: `MAX_MIRRORS=10`, `DAYS_WITHOUT_REPORT=7`
+
+2. **List Values**: Provide comma-separated strings for list-type settings
+   - Example: `ERRATA_OS_UPDATES=rocky,alma,ubuntu`, `ALMA_RELEASES=8,9,10`
+
+3. **Wildcard Override**: Use `PATCHMAN_SETTING_<NAME>=<value>` for any custom setting
+   - Example: `PATCHMAN_SETTING_CUSTOM_VALUE=123`
+
+For a complete list of available Patchman settings and their descriptions, refer to the [upstream local_settings.py](https://github.com/furlongm/patchman/blob/main/etc/patchman/local_settings.py).
+
+### Common Environment Variables
+
+| Name                            | Description                                                                                                          | Default                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `ADMIN_EMAIL`                   | Administrator email address.                                                                                         | `admin@example.com`                                    |
+| `ADMIN_USERNAME`                | Administrator username.                                                                                              | `admin`                                                |
+| `SECRET_KEY`                    | Django secret key. Create a unique string and don't share it with anybody.                                          | _Required for production_                              |
+| `TIME_ZONE`                     | Time zone for this installation. See [TZ database](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).          | `Etc/UTC`                                              |
+| `LANGUAGE_CODE`                 | Language code. See [language identifiers](http://www.i18nguy.com/unicode/language-identifiers.html).                | `en-GB`                                                |
+| `MAX_MIRRORS`                   | Maximum number of mirrors to add or refresh per repo.                                                               | `5`                                                    |
+| `MAX_MIRROR_FAILURES`           | Maximum number of failures before disabling a mirror. Set to `-1` to never disable.                                 | `14`                                                   |
+| `DAYS_WITHOUT_REPORT`           | Number of days to wait before notifying users that a host has not reported.                                         | `14`                                                   |
+| `ALLOWED_HOSTS`                 | Comma-separated list of hosts allowed to access Patchman.                                                           | `*` (all hosts)                                        |
+| `CSRF_TRUSTED_ORIGINS`          | Comma-separated list of trusted origins for CSRF protection.                                                        | `http://localhost`                                     |
+| `ERRATA_OS_UPDATES`             | Comma-separated list of errata sources to update.                                                                   | `yum,rocky,alma,arch,ubuntu,debian`                    |
+| `ALMA_RELEASES`                 | Comma-separated list of Alma Linux releases to update.                                                              | `8,9,10`                                               |
+| `DEBIAN_CODENAMES`              | Comma-separated list of Debian codenames to update.                                                                 | `bookworm,trixie`                                      |
+| `UBUNTU_CODENAMES`              | Comma-separated list of Ubuntu codenames to update.                                                                 | `jammy,noble`                                          |
+| `PATCHMAN_MAINTENANCE_ENABLED`  | Enable/disable the scheduled maintenance action.                                                                    | `true`                                                 |
+| `PATCHMAN_MAINTENANCE_SCHEDULE` | Cron schedule for maintenance. See [go-cron format](https://pkg.go.dev/github.com/robfig/cron).                     | `@daily`                                               |
 
 ### Database Configuration
 
