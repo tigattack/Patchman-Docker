@@ -4,10 +4,6 @@ This is a Dockerised version of [Patchman](https://github.com/furlongm/patchman)
 
 It also has a modified host page to add a separate section for security updates.
 
-> [!WARNING]
-> From tag **3.0.14** onwards, this image requires memcached.  
-> Please see the updated [`docker-compose.yml`](https://github.com/tigattack/Patchman-Docker/blob/main/docker-compose.yml) file and [Advanced Configuration](#advanced-configuration--debugging) for details.
-
 ## Getting Started
 
 1. Download `docker-compose.yml` and `.env`
@@ -46,22 +42,41 @@ If you wish to set your own password, configure a `MYSQL_ROOT_PASSWORD` environm
 
 ## Environment variables
 
-All environment variables without a default are **required**, unless noted otherwise in the variable's description.
+This Docker image supports configuring any Patchman setting through environment variables. The configuration system intelligently handles type casting for booleans, integers, lists, and dictionaries.
 
-The rest are optional and, if unspecified, will use the listed default.
+### Configuration Methods
 
-| Name                            | Description                                                                                                                                                                                                                                   | Default   |
-|---------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------|
-| `ADMIN_EMAIL`                   | Administrator email address.                                                                                                                                                                                                                  |           |
-| `ADMIN_USERNAME`                | Administrator username.                                                                                                                                                                                                                       |           |
-| `SECRET_KEY`                    | Patchman's secret key. Create a unique string and don't share it with anybody.                                                                                                                                                                |           |
-| `TIME_ZONE`                     | Time zone for this installation. All choices can be found [here](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).<br>At time of writing, Patchman does not properly support this. It will work, but you'll receive warnings to STDOUT. | `Etc/UTC` |
-| `LANGUAGE_CODE`                 | Language for this installation. All choices can be found [here](http://www.i18nguy.com/unicode/language-identifiers.html).                                                                                                                    | `en-GB`   |
-| `MAX_MIRRORS`                   | Maximum number of mirrors to add or refresh per repo.                                                                                                                                                                                         | `5`       |
-| `DAYS_WITHOUT_REPORT`           | Number of days to wait before notifying users that a host has not reported.                                                                                                                                                                   | `14`      |
-| `ALLOWED_HOSTS`                 | Hosts allowed to access Patchman.                                                                                                                                                                                                             | `*`       |
-| `PATCHMAN_MAINTENANCE_ENABLED`  | Enable/disable the scheduled maintenance action.                                                                                                                                                                                              | `true`    |
-| `PATCHMAN_MAINTENANCE_SCHEDULE` | The cron schedule for the maintenance action.<br>See [here](https://pkg.go.dev/github.com/robfig/cron) for the scheduling format (go-cron).                                                                                                   | `@daily`  |
+1. **Direct Setting Override**: Use the exact setting name from Patchman's configuration
+   - Example: `MAX_MIRRORS=10`, `DAYS_WITHOUT_REPORT=7`
+
+2. **List Values**: Provide comma-separated strings for list-type settings
+   - Example: `ERRATA_OS_UPDATES=rocky,alma,ubuntu`, `ALMA_RELEASES=8,9,10`
+
+3. **Wildcard Override**: Use `PATCHMAN_SETTING_<NAME>=<value>` for any custom setting
+   - Example: `PATCHMAN_SETTING_CUSTOM_VALUE=123`
+
+For a complete list of available Patchman settings and their descriptions, refer to the [upstream local_settings.py](https://github.com/furlongm/patchman/blob/main/etc/patchman/local_settings.py).
+
+### Common Environment Variables
+
+| Name                            | Description                                                                                                          | Default                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `ADMIN_EMAIL`                   | Administrator email address.                                                                                         | `admin@example.com`                                    |
+| `ADMIN_USERNAME`                | Administrator username.                                                                                              | `admin`                                                |
+| `SECRET_KEY`                    | Django secret key. Create a unique string and don't share it with anybody.                                          | _Required for production_                              |
+| `TIME_ZONE`                     | Time zone for this installation. See [TZ database](http://en.wikipedia.org/wiki/List_of_tz_zones_by_name).          | `Etc/UTC`                                              |
+| `LANGUAGE_CODE`                 | Language code. See [language identifiers](http://www.i18nguy.com/unicode/language-identifiers.html).                | `en-GB`                                                |
+| `MAX_MIRRORS`                   | Maximum number of mirrors to add or refresh per repo.                                                               | `5`                                                    |
+| `MAX_MIRROR_FAILURES`           | Maximum number of failures before disabling a mirror. Set to `-1` to never disable.                                 | `14`                                                   |
+| `DAYS_WITHOUT_REPORT`           | Number of days to wait before notifying users that a host has not reported.                                         | `14`                                                   |
+| `ALLOWED_HOSTS`                 | Comma-separated list of hosts allowed to access Patchman.                                                           | `*` (all hosts)                                        |
+| `CSRF_TRUSTED_ORIGINS`          | Comma-separated list of trusted origins for CSRF protection.                                                        | `http://localhost`                                     |
+| `ERRATA_OS_UPDATES`             | Comma-separated list of errata sources to update.                                                                   | `yum,rocky,alma,arch,ubuntu,debian`                    |
+| `ALMA_RELEASES`                 | Comma-separated list of Alma Linux releases to update.                                                              | `8,9,10`                                               |
+| `DEBIAN_CODENAMES`              | Comma-separated list of Debian codenames to update.                                                                 | `bookworm,trixie`                                      |
+| `UBUNTU_CODENAMES`              | Comma-separated list of Ubuntu codenames to update.                                                                 | `jammy,noble`                                          |
+| `PATCHMAN_MAINTENANCE_ENABLED`  | Enable/disable the scheduled maintenance action.                                                                    | `true`                                                 |
+| `PATCHMAN_MAINTENANCE_SCHEDULE` | Cron schedule for maintenance. See [go-cron format](https://pkg.go.dev/github.com/robfig/cron).                     | `@daily`                                               |
 
 ### Database Configuration
 
@@ -70,7 +85,7 @@ By default, Patchman will use the database container included in `docker-compose
 However, you can use an external/different database if you wish. To do so, configure `.env` with the following settings:
 
 | Name          | Description                                                             | Default                 |
-|---------------|-------------------------------------------------------------------------|-------------------------|
+| ------------- | ----------------------------------------------------------------------- | ----------------------- |
 | `DB_ENGINE`   | Supported database engines: `mysql`, `oracle`, and `postgresql`.        | `mysql`                 |
 | `DB_HOST`     | Database server IP/name.                                                | `mariadb`               |
 | `DB_PORT`     | Database port. If empty, will use the default port for selected engine. |                         |
@@ -78,19 +93,16 @@ However, you can use an external/different database if you wish. To do so, confi
 | `DB_USER`     | Database username.                                                      | `patchman`              |
 | `DB_PASSWORD` | Database password.                                                      | `MyPatchmanDBP@ssw0rd!` |
 
-
 ### Advanced Configuration & Debugging
 
-| Name                | Description                                                                                        | Default     |
-|---------------------|----------------------------------------------------------------------------------------------------|-------------|
-| `DJANGO_DEBUG`      | Enable/disable Django debug.                                                                       | `False`     |
-| `DJANGO_LOGLEVEL`   | Set Django's log level.                                                                            | `INFO`      |
-| `GUNICORN_WORKERS`  | Numbers of Gunicorn (web server) workers.                                                          | `2`         |
-| `CELERY_REDIS_HOST` | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server. | `redis`     |
-| `CELERY_REDIS_PORT` | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.    | `6379`      |
-| `CELERY_LOG_LEVEL`  | Set Celery's log level.                                                                            | `INFO`      |
-| `MEMCACHED_HOST`    | memcached server IP/name.                                                                          | `memcached` |
-| `MEMCACHED_PORT`    | memcached server port.                                                                             | `11211`     |
+| Name                | Description                                                                                        | Default |
+| ------------------- | -------------------------------------------------------------------------------------------------- | ------- |
+| `DJANGO_DEBUG`      | Enable/disable Django debug.                                                                       | `False` |
+| `DJANGO_LOGLEVEL`   | Set Django's log level.                                                                            | `INFO`  |
+| `GUNICORN_WORKERS`  | Numbers of Gunicorn (web server) workers.                                                          | `2`     |
+| `CELERY_REDIS_HOST` | Redis server IP/name for Celery worker.<br>Only set this if you want to use your own redis server. | `redis` |
+| `CELERY_REDIS_PORT` | Redis server port for Celery worker.<br>Only set this if you want to use your own redis server.    | `6379`  |
+| `CELERY_LOG_LEVEL`  | Set Celery's log level.                                                                            | `INFO`  |
 
 ## Credits
 
