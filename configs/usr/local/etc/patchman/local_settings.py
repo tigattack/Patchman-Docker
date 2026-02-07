@@ -22,6 +22,7 @@ env = environ.Env(
     DAYS_WITHOUT_REPORT  = (int, 14),
     CELERY_REDIS_HOST    = (str),
     CELERY_REDIS_PORT    = (str),
+    ERRATA_OS_UPDATES    = (list, ["yum", "rocky", "alma", "arch", "ubuntu", "debian"]),
 )
 
 DEBUG = env("DJANGO_DEBUG")
@@ -77,3 +78,6 @@ STATIC_ROOT = ("/app/patchman/static/",)
 # Enable Celery
 USE_ASYNC_PROCESSING = True
 CELERY_BROKER_URL    = f"redis://{env('CELERY_REDIS_HOST')}:{env('CELERY_REDIS_PORT')}/0"
+
+# List of update types to consider when generating errata reports
+ERRATA_OS_UPDATES = env("ERRATA_OS_UPDATES")
