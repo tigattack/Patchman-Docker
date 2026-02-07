@@ -3,24 +3,25 @@
 import environ
 
 env = environ.Env(
-    DJANGO_DEBUG        = (bool, False),
-    DJANGO_LOGLEVEL     = (str, "INFO"),
-    ALLOWED_HOSTS       = (list, ['*']),
-    SECRET_KEY          = (str),
-    ADMIN_EMAIL         = (str),
-    ADMIN_USERNAME      = (str),
-    DB_ENGINE           = (str),
-    DB_HOST             = (str),
-    DB_PORT             = (int, ""),
-    DB_NAME             = (str),
-    DB_USER             = (str),
-    DB_PASSWORD         = (str),
-    TIME_ZONE           = (str, "Etc/UTC"),
-    LANGUAGE_CODE       = (str, "en-GB"),
-    MAX_MIRRORS         = (int, 5),
-    DAYS_WITHOUT_REPORT = (int, 14),
-    CELERY_REDIS_HOST   = (str),
-    CELERY_REDIS_PORT   = (str),
+    DJANGO_DEBUG         = (bool, False),
+    DJANGO_LOGLEVEL      = (str, "INFO"),
+    ALLOWED_HOSTS        = (list, ['*']),
+    CSRF_TRUSTED_ORIGINS = (list, ["http://localhost"]),
+    SECRET_KEY           = (str),
+    ADMIN_EMAIL          = (str),
+    ADMIN_USERNAME       = (str),
+    DB_ENGINE            = (str),
+    DB_HOST              = (str),
+    DB_PORT              = (int, ""),
+    DB_NAME              = (str),
+    DB_USER              = (str),
+    DB_PASSWORD          = (str),
+    TIME_ZONE            = (str, "Etc/UTC"),
+    LANGUAGE_CODE        = (str, "en-GB"),
+    MAX_MIRRORS          = (int, 5),
+    DAYS_WITHOUT_REPORT  = (int, 14),
+    CELERY_REDIS_HOST    = (str),
+    CELERY_REDIS_PORT    = (str),
 )
 
 DEBUG = env("DJANGO_DEBUG")
@@ -57,6 +58,9 @@ SECRET_KEY = env("SECRET_KEY")
 
 # Add the IP addresses that your web server will be listening on
 ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+
+# Trusted origins for CSRF protection
+CSRF_TRUSTED_ORIGINS = env("CSRF_TRUSTED_ORIGINS")
 
 # Maximum number of mirrors to add or refresh per repo
 MAX_MIRRORS = env("MAX_MIRRORS")
