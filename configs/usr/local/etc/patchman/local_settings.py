@@ -39,15 +39,14 @@ DATABASES = {
         "HOST": env("DB_HOST"),
         "PORT": env("DB_PORT"),
         "STORAGE_ENGINE": "INNODB",
-        "CHARSET" : "utf8"
+        "CHARSET": "utf8",
     }
 }
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 TIME_ZONE = env("TIME_ZONE")
-# True if value not default:
-USE_TZ    = env("TIME_ZONE") != "Etc/UTC"
+USE_TZ    = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
