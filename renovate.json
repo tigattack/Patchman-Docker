@@ -5,8 +5,8 @@
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "Dockerfile"
+      "managerFilePatterns": [
+        "/Dockerfile/"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_VERSION[ =]\"?(?<currentValue>.+?)\"?\\s"
@@ -15,7 +15,9 @@
   ],
   "packageRules": [
     {
-      "matchPackageNames": ["whitenoise"],
+      "matchPackageNames": [
+        "whitenoise"
+      ],
       "allowedVersions": "<=6.7.0"
     }
   ]
