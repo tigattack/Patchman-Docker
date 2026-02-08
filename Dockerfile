@@ -1,7 +1,7 @@
 FROM python:3.14-alpine
 
 # renovate: datasource=github-tags depName=furlongm/patchman
-ARG PATCHMAN_VERSION="v4.0.7"
+ARG PATCHMAN_VERSION="v4.0.8"
 
 ENV APPDIR="/app"
 ENV CELERY_REDIS_HOST="redis"
