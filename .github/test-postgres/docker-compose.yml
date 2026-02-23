@@ -43,7 +43,7 @@ services:
       - redis:/data
 
   postgres:
-    image: postgres:18.1-alpine
+    image: postgres:18.2-alpine
     restart: unless-stopped
     healthcheck:
       test:
