@@ -143,7 +143,7 @@ jobs:
         echo "name=$(sed 's/\//_/' <<< ${{ matrix.platform }})" >> $GITHUB_OUTPUT
 
     - name: Upload image digest
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: digests-${{ steps.platform.outputs.name }}
         path: /tmp/digests/*
@@ -160,13 +160,13 @@ jobs:
       packages: write
     steps:
       - name: Download linux/amd64 image digests
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: digests-linux_amd64
           path: /tmp/digests
 
       - name: Download linux/arm64 image digests
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: digests-linux_arm64
           path: /tmp/digests
