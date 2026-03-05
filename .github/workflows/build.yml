@@ -59,7 +59,7 @@ jobs:
             type=ref,event=pr
 
     - name: Build image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       id: build
       with:
         outputs: type=docker,dest=/tmp/${{ env.IMAGE_NAME }}.tar
@@ -119,7 +119,7 @@ jobs:
         docker compose logs -t --tail=all
 
     - name: Push image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       id: push-built-image
       with:
         # Push image without tags (i.e. digest only)
