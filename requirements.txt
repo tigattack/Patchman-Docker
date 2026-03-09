@@ -2,7 +2,7 @@ django-environ==0.13.0
 gunicorn==25.1.0
 mysqlclient==2.2.8
 psycopg2-binary==2.9.11
-setuptools==82.0.0
+setuptools==82.0.1
 # Whitenoise 6.8.0 drops support for Django 3.2-4.1.
 # Patchman requires 3.2: https://github.com/furlongm/patchman/blob/master/requirements.txt
 whitenoise==6.11.0
