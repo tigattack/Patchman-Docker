@@ -1,5 +1,5 @@
 django-environ==0.13.0
-gunicorn==25.2.0
+gunicorn==25.3.0
 mysqlclient==2.2.8
 psycopg2-binary==2.9.11
 setuptools==82.0.1
