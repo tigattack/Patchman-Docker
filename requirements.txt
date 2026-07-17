@@ -1,4 +1,4 @@
-django-environ==0.13.0
+django-environ==0.14.0
 gunicorn==26.0.0
 mysqlclient==2.2.8
 psycopg2-binary==2.9.12
